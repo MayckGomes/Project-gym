@@ -34,7 +34,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import mayckgomes.com.projectgym.DataTypes.NavBarItem
+import mayckgomes.com.projectgym.DataTypes.User
 import mayckgomes.com.projectgym.funcs.Tela
 import mayckgomes.com.projectgym.ui.theme.Gray
 import mayckgomes.com.projectgym.ui.theme.LightGray
@@ -42,7 +44,7 @@ import mayckgomes.com.projectgym.ui.theme.Yellow
 
 
 @Composable
-fun Menu(){
+fun Menu(user: User,navController: NavController){
 
     var telaName by rememberSaveable {
         mutableStateOf("Home")
@@ -94,14 +96,8 @@ fun Menu(){
                 .padding(innerpadding)
                 .background(color = Gray)
         ) {
-            Tela(telaName, "")
+            Tela(telaName, user, navController = navController)
         }
     }
 
-}
-
-@Preview
-@Composable
-fun MenuPreview(){
-    Menu()
 }

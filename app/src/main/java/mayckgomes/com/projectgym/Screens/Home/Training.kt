@@ -35,8 +35,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import mayckgomes.com.projectgym.DataTypes.Exercicio
 import mayckgomes.com.projectgym.DataTypes.Treino
+import mayckgomes.com.projectgym.EditTreino
 import mayckgomes.com.projectgym.ui.theme.DarkGray
 import mayckgomes.com.projectgym.ui.theme.Gray
 import mayckgomes.com.projectgym.ui.theme.LightGray
@@ -44,30 +46,10 @@ import mayckgomes.com.projectgym.ui.theme.Yellow
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TrainingScreen(){
+fun TrainingScreen(navController: NavController,listaTreinos:List<Treino>){
 
     var exerciseList by rememberSaveable {
-        mutableStateOf(
-            listOf(
-                Treino(
-                    "Treino A",
-                    listOf(
-                        Exercicio("esteira",25,-1),
-                     )
-                ),
-                Treino(
-                    "Treino B",
-                    listOf(
-                        Exercicio("esteira",25,-1),
-                    )
-                ),Treino(
-                    "Treino C",
-                    listOf(
-                        Exercicio("esteira",25,-1),
-                    )
-                )
-            )
-        )
+        mutableStateOf( listaTreinos )
     }
 
    Scaffold(
@@ -131,10 +113,10 @@ fun TrainingScreen(){
                        Button(
                            modifier = Modifier.fillMaxWidth(0.5f),
                            colors = ButtonDefaults.buttonColors(
-                               containerColor = Yellow,
+                               containerColor = Gray,
                                contentColor = Color.Black
                            ),
-                           onClick = {null}) {
+                           onClick = {navController.navigate(EditTreino)}) {
                            Text("Editar", fontSize = 15.sp)
                        }
 
@@ -147,10 +129,4 @@ fun TrainingScreen(){
 
    }
 
-}
-
-@Preview(showSystemUi = true)
-@Composable
-fun TrainingScreenPreview(){
-    TrainingScreen()
 }

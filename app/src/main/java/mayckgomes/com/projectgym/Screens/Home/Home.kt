@@ -79,7 +79,6 @@ fun HomeScreen(name:String){
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .size(70.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .background(color = DarkGray)
                 .padding(10.dp)
@@ -102,12 +101,19 @@ fun HomeScreen(name:String){
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .size(70.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .background(color = DarkGray)
                 .padding(10.dp)
         ){
-            Text("Você Treinou $trainingDays dias", color = Color.White)
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+                Text("Você Treinou ", color = Color.White)
+
+                Spacer(Modifier.size(10.dp))
+
+                Text("$trainingDays dias", color = Color.White)
+
+            }
         }
 
         Spacer(Modifier.size(15.dp))
@@ -116,7 +122,6 @@ fun HomeScreen(name:String){
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .size(70.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .background(color = DarkGray)
                 .padding(10.dp)
