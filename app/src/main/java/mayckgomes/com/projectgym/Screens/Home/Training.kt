@@ -18,9 +18,13 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -52,6 +56,14 @@ fun TrainingScreen(navController: NavController,listaTreinos:List<Treino>){
         mutableStateOf( listaTreinos )
     }
 
+    var menuIsOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    var nomeTreino by rememberSaveable {
+        mutableStateOf("")
+    }
+
    Scaffold(
        modifier = Modifier
            .background(color = Gray),
@@ -67,6 +79,11 @@ fun TrainingScreen(navController: NavController,listaTreinos:List<Treino>){
                    .padding(20.dp)
            ){
                Text("TREINOS", color = Color.White, fontSize = 25.sp, fontWeight = FontWeight.Bold)
+           }
+       },
+       floatingActionButton = {
+           FloatingActionButton(onClick = { menuIsOpen = true } ) {
+
            }
        }
    )
@@ -126,6 +143,28 @@ fun TrainingScreen(navController: NavController,listaTreinos:List<Treino>){
            }
 
        }
+
+        if (menuIsOpen){
+            ModalBottomSheet(onDismissRequest = {menuIsOpen = false},
+                modifier = Modifier
+                    .background(color = LightGray)
+                    .padding(10.dp)
+            ) {
+                Column {
+                    Text("Adicionar Treinos", color = Color.White, fontSize = 15.sp)
+
+                    Spacer(Modifier.size(15.dp))
+
+                    Text("Nome")
+
+                    OutlinedTextField(
+                        value = nomeTreino,
+                        onValueChange = {nomeTreino = it}
+                    )
+
+                }
+            }
+        }
 
    }
 

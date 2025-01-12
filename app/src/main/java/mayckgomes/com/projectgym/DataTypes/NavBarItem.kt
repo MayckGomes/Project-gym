@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 
 data class NavBarItem(
     val title:String,
-    val icon:ImageVector,
+    val iconUnselected:ImageVector,
+    val iconSelected:ImageVector,
     val screen:String
 )

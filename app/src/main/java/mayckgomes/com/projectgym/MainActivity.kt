@@ -55,7 +55,7 @@ fun Navegacao(user:User){
         composable<Menu> { Menu(user,navController) }
         composable<EditTreino> {
 
-            Exercicios() }
+            Exercicios(navController) }
     })
 
 }
