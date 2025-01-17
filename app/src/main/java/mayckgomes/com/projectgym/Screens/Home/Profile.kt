@@ -11,8 +11,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material.icons.outlined.Person
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,11 +30,24 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import mayckgomes.com.projectgym.funcs.UserData.EditName
+import mayckgomes.com.projectgym.funcs.UserData.GetName
 import mayckgomes.com.projectgym.ui.theme.Gray
 import mayckgomes.com.projectgym.ui.theme.LightGray
+import mayckgomes.com.projectgym.ui.theme.Yellow
 
 @Composable
-fun ProfileScreen(name:String){
+fun ProfileScreen(){
+
+    var name = GetName()
+
+    var newName by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    var isClicked by rememberSaveable {
+        mutableStateOf(false)
+    }
 
     var userName by rememberSaveable {
         mutableStateOf(name)
@@ -69,6 +84,28 @@ fun ProfileScreen(name:String){
 
             Text("Olá, $userName", color = Color.White, fontSize = 30.sp)
 
+            Spacer(Modifier.size(65.dp))
+
+            OutlinedTextField(
+                value = newName,
+                onValueChange = {newName = it},
+                label = { Text("Editar Nome") }
+            )
+
+            Spacer(Modifier.size(20.dp))
+
+            Button(
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Yellow,
+                    contentColor = Color.Black),
+                onClick = {isClicked = true}) {
+                Text("Salvar")
+            }
+
+            if(isClicked){
+                EditName(name)
+            }
+
         }
 
     }
@@ -78,5 +115,5 @@ fun ProfileScreen(name:String){
 @Preview(showSystemUi = true)
 @Composable
 fun ProfileScreenPreview(){
-    ProfileScreen("Mayck")
+    ProfileScreen()
 }

@@ -1,6 +1,5 @@
 package mayckgomes.com.projectgym.Screens.Home
 
-import android.content.ClipData.Item
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,18 +13,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,32 +32,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import mayckgomes.com.projectgym.DataTypes.Exercicio
-import mayckgomes.com.projectgym.DataTypes.Treino
-import mayckgomes.com.projectgym.EditTreino
+import mayckgomes.com.projectgym.EditOrAddTreino
+import mayckgomes.com.projectgym.funcs.UserFuncs.GetTreinos
 import mayckgomes.com.projectgym.ui.theme.DarkGray
 import mayckgomes.com.projectgym.ui.theme.Gray
 import mayckgomes.com.projectgym.ui.theme.LightGray
 import mayckgomes.com.projectgym.ui.theme.Yellow
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TrainingScreen(navController: NavController,listaTreinos:List<Treino>){
+fun TrainingScreen(navController: NavController){
 
-    var exerciseList by rememberSaveable {
-        mutableStateOf( listaTreinos )
-    }
+    val listaTreinos = GetTreinos()
 
-    var menuIsOpen by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    var nomeTreino by rememberSaveable {
-        mutableStateOf("")
+    val lista by rememberSaveable {
+        mutableStateOf(listaTreinos)
     }
 
    Scaffold(
@@ -82,90 +69,85 @@ fun TrainingScreen(navController: NavController,listaTreinos:List<Treino>){
            }
        },
        floatingActionButton = {
-           FloatingActionButton(onClick = { menuIsOpen = true } ) {
-
+           FloatingActionButton(
+               contentColor = Color.Black,
+               containerColor = Yellow,
+               onClick = { navController.navigate(EditOrAddTreino("nada"))}
+               ) {
+                Icon(Icons.Default.Add,contentDescription = null)
            }
        }
    )
     { innerpadding ->
+       if (lista.isNotEmpty()){
 
-       LazyColumn(
-           modifier = Modifier
-               .fillMaxSize()
-               .background(color = Gray)
-               .padding(innerpadding)
-               .padding(10.dp)
-       ) {
-           items(exerciseList){ exercicio ->
+           LazyColumn(
+               modifier = Modifier
+                   .fillMaxSize()
+                   .background(color = Gray)
+                   .padding(innerpadding)
+                   .padding(10.dp)
+           ) {
+               items(lista){ treino ->
 
-               Row(
-                   verticalAlignment = Alignment.CenterVertically,
-                   horizontalArrangement = Arrangement.SpaceBetween,
-                   modifier = Modifier
-                       .fillMaxWidth(1f)
-                       .clip(RoundedCornerShape(12.dp))
-                       .background(DarkGray)
-                       .padding(10.dp)
-               ) {
+                   Row(
+                       verticalAlignment = Alignment.CenterVertically,
+                       horizontalArrangement = Arrangement.SpaceBetween,
+                       modifier = Modifier
+                           .fillMaxWidth(1f)
+                           .clip(RoundedCornerShape(12.dp))
+                           .background(DarkGray)
+                           .padding(10.dp)
+                   ) {
 
-                   Spacer(Modifier.size(1.dp))
+                       Spacer(Modifier.size(1.dp))
 
-                   Text( exercicio.Nome , color = Color.White, fontSize = 25.sp)
+                       Text( treino.nome , color = Color.White, fontSize = 25.sp)
 
-                   Column(
-                       horizontalAlignment = Alignment.CenterHorizontally,
-                       verticalArrangement = Arrangement.Center){
+                       Column(
+                           horizontalAlignment = Alignment.CenterHorizontally,
+                           verticalArrangement = Arrangement.Center){
 
-                       Button(
-                           modifier = Modifier.fillMaxWidth(0.5f),
-                           colors = ButtonDefaults.buttonColors(
-                               containerColor = Yellow,
-                               contentColor = Color.Black
-                           ),
-                           onClick = {null}
-                       ) {
-                           Text("Comecar", fontSize = 15.sp)
+                           Button(
+                               modifier = Modifier.fillMaxWidth(0.5f),
+                               colors = ButtonDefaults.buttonColors(
+                                   containerColor = Yellow,
+                                   contentColor = Color.Black
+                               ),
+                               onClick = {null}
+                           ) {
+                               Text("Comecar", fontSize = 15.sp)
+                           }
+
+                           Button(
+                               modifier = Modifier.fillMaxWidth(0.5f),
+                               colors = ButtonDefaults.buttonColors(
+                                   containerColor = Gray,
+                                   contentColor = Color.Black
+                               ),
+                               onClick = {navController.navigate(EditOrAddTreino(treino.id))}) {
+                               Text("Editar", fontSize = 15.sp)
+                           }
+
                        }
-
-                       Button(
-                           modifier = Modifier.fillMaxWidth(0.5f),
-                           colors = ButtonDefaults.buttonColors(
-                               containerColor = Gray,
-                               contentColor = Color.Black
-                           ),
-                           onClick = {navController.navigate(EditTreino)}) {
-                           Text("Editar", fontSize = 15.sp)
-                       }
-
                    }
+                   Spacer(Modifier.size(10.dp))
                }
-               Spacer(Modifier.size(10.dp))
+
+           }
+
+       } else {
+
+           Column(
+               verticalArrangement = Arrangement.Center,
+               horizontalAlignment = Alignment.CenterHorizontally,
+               modifier = Modifier
+                   .fillMaxSize()
+                   .background(color = Gray)
+           ) {
+               Text("Não Há Treinos Criados!!")
            }
 
        }
-
-        if (menuIsOpen){
-            ModalBottomSheet(onDismissRequest = {menuIsOpen = false},
-                modifier = Modifier
-                    .background(color = LightGray)
-                    .padding(10.dp)
-            ) {
-                Column {
-                    Text("Adicionar Treinos", color = Color.White, fontSize = 15.sp)
-
-                    Spacer(Modifier.size(15.dp))
-
-                    Text("Nome")
-
-                    OutlinedTextField(
-                        value = nomeTreino,
-                        onValueChange = {nomeTreino = it}
-                    )
-
-                }
-            }
-        }
-
-   }
-
+    }
 }

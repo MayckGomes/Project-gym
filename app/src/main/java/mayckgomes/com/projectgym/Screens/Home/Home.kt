@@ -24,12 +24,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import mayckgomes.com.projectgym.funcs.UserData.GetName
 import mayckgomes.com.projectgym.ui.theme.DarkGray
 import mayckgomes.com.projectgym.ui.theme.Gray
 import mayckgomes.com.projectgym.ui.theme.Yellow
 
 @Composable
-fun HomeScreen(name:String){
+fun HomeScreen(){
+
+    val name = GetName()
 
     var userName by rememberSaveable {
         mutableStateOf(name)
@@ -70,7 +73,7 @@ fun HomeScreen(name:String){
                 .padding(15.dp)
 
         ){
-            Text("Ola, $userName", color = Color.White, fontSize = 25.sp)
+            Text("Olá, $userName", color = Color.White, fontSize = 25.sp)
         }
 
         Spacer(modifier = Modifier.size(15.dp))
@@ -146,5 +149,5 @@ fun HomeScreen(name:String){
 @Preview(showSystemUi = true)
 @Composable
 fun HomePreview(){
-    HomeScreen("Mayck")
+    HomeScreen()
 }

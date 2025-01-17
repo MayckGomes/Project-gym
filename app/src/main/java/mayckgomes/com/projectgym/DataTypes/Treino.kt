@@ -1,7 +1,10 @@
 package mayckgomes.com.projectgym.DataTypes
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Treino(
     val id:String,
-    val Nome:String,
-    val Lista:List<Exercicio>
+    val nome:String,
+    val idListaTreinos:String
 )

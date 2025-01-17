@@ -10,11 +10,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import kotlinx.serialization.Serializable
-import mayckgomes.com.projectgym.DataTypes.Exercicio
-import mayckgomes.com.projectgym.DataTypes.User
+import mayckgomes.com.projectgym.DataTypes.Treino
+import mayckgomes.com.projectgym.Screens.Editing.EditingScreen
 import mayckgomes.com.projectgym.Screens.Home.Menu
 import mayckgomes.com.projectgym.Screens.Training.Exercicios
-import mayckgomes.com.projectgym.funcs.UserData
 import mayckgomes.com.projectgym.ui.theme.ProjectGymTheme
 
 class MainActivity : ComponentActivity() {
@@ -24,8 +23,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             ProjectGymTheme {
 
-                val Usuario = UserData.ColetarDados()
-                Navegacao(user = Usuario)
+                Navegacao()
 
             }
         }
@@ -35,27 +33,34 @@ class MainActivity : ComponentActivity() {
 @Serializable
 object Menu
 
-//@Serializable
-//data class EditTreino(
-//    val lista:List<Exercicio>
-//)
 
 @Serializable
-object EditTreino
+data class ShowExercicios(
+    val id:String
+)
 
 @Serializable
-object EditExercicio
+data class EditOrAddTreino(
+    val id:String
+)
 
 @Composable
-fun Navegacao(user:User){
+fun Navegacao(){
     val navController = rememberNavController()
 
     NavHost(navController, startDestination = Menu, builder = {
 
-        composable<Menu> { Menu(user,navController) }
-        composable<EditTreino> {
+        composable<Menu> { Menu(navController) }
 
-            Exercicios(navController) }
+
+        composable<ShowExercicios> {
+            val args = it.toRoute<ShowExercicios>()
+            Exercicios(navController, id = args.id) }
+
+        composable<EditOrAddTreino> {
+            val args = it.toRoute<EditOrAddTreino>()
+            EditingScreen(navController, id = args.id)
+        }
     })
 
 }

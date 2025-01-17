@@ -22,15 +22,16 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,26 +44,16 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import mayckgomes.com.projectgym.DataTypes.Exercicio
 import mayckgomes.com.projectgym.Menu
+import mayckgomes.com.projectgym.funcs.UserFuncs.GetExercicios
 import mayckgomes.com.projectgym.ui.theme.DarkGray
 import mayckgomes.com.projectgym.ui.theme.Gray
 import mayckgomes.com.projectgym.ui.theme.LightGray
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Exercicios(navController: NavController){
+fun Exercicios(navController: NavController, id:String){
 
-    var exercicios = listOf(
-        Exercicio(
-            nome = "Esteira",
-            series = 15,
-            repeticoes = -1
-        ),
-        Exercicio(
-            nome = "Supino Inclinado",
-            series = 3,
-            repeticoes = 15
-        )
-    )
+    val exercicios = GetExercicios(id)
 
     var menuIsOpen by rememberSaveable {
         mutableStateOf(false)
@@ -98,45 +89,68 @@ fun Exercicios(navController: NavController){
 
     ) {innerpadding ->
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = Gray)
-                .padding(innerpadding)
-                .padding(10.dp)
-        ) {
+        if (exercicios.isEmpty()){
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Gray)
+            ){
+                Text("Não há exercicios nesse treino")
+            }
 
-            items(exercicios){ exercicio ->
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Gray)
+                    .padding(innerpadding)
+                    .padding(10.dp)
+            ) {
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier
-                        .fillMaxWidth(1f)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(DarkGray)
-                        .padding(10.dp)
-                ) {
+                items(exercicios){ exercicio ->
 
-                    Spacer(Modifier.size(1.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier
+                            .fillMaxWidth(1f)
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(DarkGray)
+                            .padding(10.dp)
+                    ) {
 
-                    Text( exercicio.nome , color = Color.White, fontSize = 25.sp)
+                        Spacer(Modifier.size(1.dp))
 
-                    Button(
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Gray,
-                            contentColor = Color.Black
-                        ),
-                        onClick = {null}) {
-                        Text("Editar", fontSize = 15.sp)
+                        Column {
+                            Text( exercicio.nome , color = Color.White, fontSize = 25.sp)
+                            Spacer(Modifier.size(10.dp))
+                            if (exercicio.repeticoes != -1){
+                                Text("Series: ${exercicio.series}")
+                                Spacer(Modifier.size(10.dp))
+                                Text("Repetições: ${exercicio.repeticoes}")
+                            } else {
+                                Text("Tempo: ${exercicio.series}")
+                            }
+                        }
+
+                        Button(
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Gray,
+                                contentColor = Color.Black
+                            ),
+                            onClick = {null}) {
+                            Text("Editar", fontSize = 15.sp)
+                        }
+
                     }
+
+                    Spacer(Modifier.size(10.dp))
 
                 }
 
-                Spacer(Modifier.size(10.dp))
-
             }
-
         }
 
         if (menuIsOpen){
@@ -145,16 +159,12 @@ fun Exercicios(navController: NavController){
                     .background(color = LightGray)
                     .padding(10.dp)
             ) {
-                Text("teste")
+
+                Text("treino adicionado")
+
             }
         }
 
     }
 
-}
-
-@Preview(showSystemUi = true)
-@Composable
-fun ExerciciosPreview(){
-    Exercicios(rememberNavController())
 }
