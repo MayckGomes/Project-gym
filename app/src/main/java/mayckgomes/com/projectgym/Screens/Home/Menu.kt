@@ -24,6 +24,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import mayckgomes.com.projectgym.DataTypes.NavBarItem
 import mayckgomes.com.projectgym.DataTypes.User
@@ -88,7 +89,11 @@ fun Menu(navController: NavController){
                             }},
                         label = {
                             if(itemSelected == navBarItem.title){
-                                Text(navBarItem.title, color = Yellow, fontWeight = FontWeight.Bold)
+                                Text(navBarItem.title,
+                                    color = Yellow,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 15.sp
+                                    )
                             } else {
                                 Text(navBarItem.title, color = Yellow)
                             }

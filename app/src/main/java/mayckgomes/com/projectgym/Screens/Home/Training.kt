@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import mayckgomes.com.projectgym.EditOrAddTreino
+import mayckgomes.com.projectgym.funcs.System.TrainingList
 import mayckgomes.com.projectgym.funcs.UserFuncs.GetTreinos
 import mayckgomes.com.projectgym.ui.theme.DarkGray
 import mayckgomes.com.projectgym.ui.theme.Gray
@@ -45,11 +46,7 @@ import mayckgomes.com.projectgym.ui.theme.Yellow
 @Composable
 fun TrainingScreen(navController: NavController){
 
-    val listaTreinos = GetTreinos()
-
-    val lista by rememberSaveable {
-        mutableStateOf(listaTreinos)
-    }
+    val lista = TrainingList
 
    Scaffold(
        modifier = Modifier

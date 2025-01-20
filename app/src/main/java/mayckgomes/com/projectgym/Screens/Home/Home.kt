@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import mayckgomes.com.projectgym.funcs.System.name
 import mayckgomes.com.projectgym.funcs.UserData.GetName
 import mayckgomes.com.projectgym.ui.theme.DarkGray
 import mayckgomes.com.projectgym.ui.theme.Gray
@@ -32,7 +33,7 @@ import mayckgomes.com.projectgym.ui.theme.Yellow
 @Composable
 fun HomeScreen(){
 
-    val name = GetName()
+    val name = name
 
     var userName by rememberSaveable {
         mutableStateOf(name)

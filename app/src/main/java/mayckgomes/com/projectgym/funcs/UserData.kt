@@ -22,6 +22,8 @@ object UserData{
     fun EditName(name:String){
         val UserData = LocalContext.current.getSharedPreferences("User",Context.MODE_PRIVATE)
 
+        System.name = name
+
         UserData.edit().putString("Nome",name).apply()
     }
 

@@ -43,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,10 +53,13 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import mayckgomes.com.projectgym.DataTypes.Exercicio
 import mayckgomes.com.projectgym.Menu
+import mayckgomes.com.projectgym.funcs.MakeMessage
 import mayckgomes.com.projectgym.funcs.UserFuncs.AddTreinos
 import mayckgomes.com.projectgym.funcs.UserFuncs.EditTreinos
 import mayckgomes.com.projectgym.funcs.UserFuncs.GetExercicios
 import mayckgomes.com.projectgym.funcs.UserFuncs.GetTreinosById
+import mayckgomes.com.projectgym.ui.Components.StyledTextField
+import mayckgomes.com.projectgym.ui.Components.StyledTextFieldNumber
 import mayckgomes.com.projectgym.ui.theme.DarkGray
 import mayckgomes.com.projectgym.ui.theme.Gray
 import mayckgomes.com.projectgym.ui.theme.LightGray
@@ -65,8 +69,6 @@ import java.util.Collections.addAll
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun EditingScreen(navController:NavController, id:String){
-
-    Log.d("treinos", "ta retornando id: $id")
 
     var listExercicio: SnapshotStateList<Exercicio> = mutableStateListOf()
 
@@ -80,29 +82,6 @@ fun EditingScreen(navController:NavController, id:String){
 
     var titulo by rememberSaveable {
         mutableStateOf("ADICIONAR TREINO")
-    }
-
-    Log.d("treinos", "id = nada ?: ${id=="nada"}")
-
-    // se for para editar
-    if (id!="nada"){
-        val treino = GetTreinosById(id)
-
-        Log.d("treinos", "ta retornando treino: $treino")
-
-        nomeTreino = treino.nome
-
-        idTreino = treino.id
-
-        titulo = "EDITANDO: ${treino.nome}"
-
-        val exercicios = GetExercicios(treino.idListaTreinos)
-
-        Log.d("exercicios", "val exercicios: $exercicios")
-
-        listExercicio = mutableStateListOf<Exercicio>().apply{
-            addAll(exercicios)
-        }
     }
 
 
@@ -130,6 +109,28 @@ fun EditingScreen(navController:NavController, id:String){
         mutableStateOf(false)
     }
 
+    val context = LocalContext.current
+
+    if (id!="nada"){
+        val treino = GetTreinosById(id)
+
+        Log.d("treinos", "ta retornando treino: $treino")
+
+        nomeTreino = treino.nome
+
+        idTreino = treino.id
+
+        titulo = "EDITANDO: ${treino.nome}"
+
+        val exercicios = GetExercicios(treino.idListaTreinos)
+
+        Log.d("exercicios", "val exercicios: $exercicios")
+
+        listExercicio = mutableStateListOf<Exercicio>().apply{
+            addAll(exercicios)
+        }
+    }
+
 
     Scaffold(
         topBar = {
@@ -145,11 +146,12 @@ fun EditingScreen(navController:NavController, id:String){
             ){
                 Row {
 
-                    IconButton(onClick = {navController.navigate(Menu)}) {
+                    IconButton(onClick = {navController.popBackStack()}) {
                         Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = null)
                     }
 
                     Text(titulo, color = Color.White, fontSize = 25.sp, fontWeight = FontWeight.Bold)
+
                 }
             }
         },
@@ -168,17 +170,21 @@ fun EditingScreen(navController:NavController, id:String){
 
                 // se for para editar treino
             if (Clicked && id!="nada"){
-                EditTreinos(idTreino,listExercicio.toList())
+
+                navController.popBackStack()
+                EditTreinos(idTreino, nome = nomeTreino,listExercicio.toList())
                 listExercicio.clear()
                 Clicked = false
-                navController.navigate(Menu)
+
 
                 // se for para add treino
             } else if (Clicked && id=="nada"){
+
+                navController.popBackStack()
                 AddTreinos(nomeTreino,listExercicio.toList())
                 listExercicio.clear()
                 Clicked = false
-                navController.navigate(Menu)
+
             }
 
         }
@@ -189,7 +195,7 @@ fun EditingScreen(navController:NavController, id:String){
                 .fillMaxSize()
                 .background(color = Gray)
                 .padding(innerpadding)
-                .padding(10.dp)
+                .padding(5.dp)
         ) {
 
             Spacer(Modifier.size(20.dp))
@@ -198,17 +204,10 @@ fun EditingScreen(navController:NavController, id:String){
 
             Spacer(Modifier.size(10.dp))
 
-            OutlinedTextField(
+            StyledTextField(
                 value = nomeTreino,
                 onValueChange = {nomeTreino = it},
-                label = { Text("Nome do Treino", color = Yellow) },
-                colors = TextFieldDefaults.colors(
-                    focusedIndicatorColor = Yellow,
-                    unfocusedIndicatorColor = Yellow,
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedContainerColor = Color.Transparent,
-
-                )
+                label = { Text("Nome do Treino", color = Yellow) }
             )
 
             Spacer(Modifier.size(10.dp))
@@ -221,18 +220,10 @@ fun EditingScreen(navController:NavController, id:String){
 
             Spacer(Modifier.size(10.dp))
 
-            OutlinedTextField(
+            StyledTextField(
                 value = nomeExercicio,
                 onValueChange = {nomeExercicio = it},
-                label = { Text("Nome Exercicio", color = Yellow) },
-                colors = TextFieldDefaults.colors(
-                    focusedTextColor = Yellow,
-                    focusedIndicatorColor = Yellow,
-                    unfocusedIndicatorColor = Yellow,
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedContainerColor = Color.Transparent
-                )
-
+                label = { Text("Nome Exercicio", color = Yellow) }
             )
 
             Spacer(Modifier.size(20.dp))
@@ -257,91 +248,58 @@ fun EditingScreen(navController:NavController, id:String){
                 horizontalArrangement = Arrangement.Center
             ) {
 
-                OutlinedTextField(
-                    modifier = Modifier
-                        .size(83.dp),
+                StyledTextFieldNumber(
                     value = series,
                     onValueChange = {series = it},
                     label = { Text("Series", color = Yellow) },
                     enabled = !isTimer,
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    colors = TextFieldDefaults.colors(
-                        focusedTextColor = Yellow,
-                        unfocusedTextColor = Color.White,
-                        disabledTextColor = Color.White,
-                        focusedIndicatorColor = Yellow,
-                        unfocusedIndicatorColor = Yellow,
-                        unfocusedContainerColor = Color.Transparent,
-                        disabledContainerColor = Color.Transparent,
-                        focusedContainerColor = Color.Transparent
-                    )
                 )
 
                 Spacer(Modifier.size(10.dp))
 
-                OutlinedTextField(
-                    modifier = Modifier
-                        .size(83.dp),
+                StyledTextFieldNumber(
                     value = repeticoes,
                     onValueChange = {repeticoes = it},
                     label = { Text("Repeticoes", color = Yellow) },
                     enabled = !isTimer,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    colors = TextFieldDefaults.colors(
-                        focusedTextColor = Yellow,
-                        unfocusedTextColor = Color.White,
-                        disabledTextColor = Color.White,
-                        focusedIndicatorColor = Yellow,
-                        unfocusedIndicatorColor = Yellow,
-                        unfocusedContainerColor = Color.Transparent,
-                        disabledContainerColor = Color.Transparent,
-                        focusedContainerColor = Color.Transparent
-                    )
+
                 )
 
                 Spacer(Modifier.size(10.dp))
 
-                OutlinedTextField(
-                    modifier = Modifier
-                        .size(83.dp),
+                StyledTextFieldNumber(
                     value = tempo,
                     onValueChange = {tempo = it},
                     label = { Text("Tempo", color = Yellow) },
                     enabled = isTimer,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    colors = TextFieldDefaults.colors(
-                        focusedTextColor = Yellow,
-                        unfocusedTextColor = Color.White,
-                        disabledTextColor = Color.White,
-                        focusedIndicatorColor = Yellow,
-                        unfocusedIndicatorColor = Yellow,
-                        unfocusedContainerColor = Color.Transparent,
-                        disabledContainerColor = Color.Transparent,
-                        focusedContainerColor = Color.Transparent
-                    )
                 )
 
                 Spacer(Modifier.size(10.dp))
 
                 Button(
                     onClick = {
-                        if (isTimer){
-                            listExercicio.add(
-                                Exercicio(
-                                    nome = nomeExercicio,
-                                    series = tempo.toInt(),
-                                    repeticoes = -1
+
+                        if (nomeExercicio.isNotEmpty()){
+
+                            when{
+                                isTimer && tempo.toIntOrNull() != null -> listExercicio.add(
+                                    Exercicio(nome = nomeExercicio, series = tempo.toInt(), repeticoes = -1))
+
+
+                                !isTimer && series.toIntOrNull() != null && repeticoes.toIntOrNull() != null -> listExercicio.add(
+                                    Exercicio(
+                                        nome = nomeExercicio,
+                                        series = series.toInt(),
+                                        repeticoes = repeticoes.toInt()
+                                    )
                                 )
-                            )
+
+                                else -> MakeMessage(context,"Preencha os campos Corretamente")
+
+                            }
+
                         } else {
-                            listExercicio.add(
-                                Exercicio(
-                                    nome = nomeExercicio,
-                                    series = series.toInt(),
-                                    repeticoes = repeticoes.toInt()
-                                )
-                            )
+                            MakeMessage(context,"Coloque um nome ao exercicio")
                         }
 
                         series = ""
@@ -402,7 +360,7 @@ fun EditingScreen(navController:NavController, id:String){
                                     Spacer(Modifier.size(5.dp))
                                     if (exercicio.repeticoes == -1){
 
-                                        Text("Tempo: ${exercicio.series}",color = Color.White)
+                                        Text("Tempo: ${exercicio.series} minutos",color = Color.White)
 
                                     } else {
 

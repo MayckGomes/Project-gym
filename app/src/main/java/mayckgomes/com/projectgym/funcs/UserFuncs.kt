@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import mayckgomes.com.projectgym.DataTypes.Exercicio
 import mayckgomes.com.projectgym.DataTypes.Treino
+import mayckgomes.com.projectgym.funcs.System.TrainingList
 
 object UserFuncs {
 
@@ -60,38 +61,13 @@ object UserFuncs {
     }
 
 
+    // Refeito ok
     @Composable
     fun GetTreinosById(idTreino: String): Treino {
-        val treinosData = GetTreinosData()
-        val treinosMap = treinosData.all
 
-        var returnedTreino = Treino("","","")
+        val treino = TrainingList[idTreino.toInt()]
 
-        if (treinosMap.isNotEmpty()){
-
-            val treinoslist = treinosMap.values.toMutableList()
-
-            for (treinos in treinoslist){
-
-                val id = treinos.toString().split(";")[0]
-                val nome = treinos.toString().split(";")[1]
-
-               if (id == idTreino){
-                   returnedTreino =
-                       Treino(
-                           id = id,
-                           nome = nome,
-                           idListaTreinos = id
-                       )
-               }
-
-            }
-
-        }
-
-        Log.d("treinos","returnedTreino final $returnedTreino")
-
-        return returnedTreino
+        return Treino(treino.id,treino.nome,treino.idListaTreinos)
     }
 
 
@@ -129,27 +105,25 @@ object UserFuncs {
     }
 
 
+    //Refeita ok
     @Composable
     fun AddTreinos(nome:String, listaExercicio: List<Exercicio>){
-        val treinosData = GetTreinosData()
 
-        val id = treinosData.all.size
+        val id = TrainingList.size
 
-        treinosData.edit().putString("$id","$id;$nome").apply()
+        TrainingList.add(Treino(id=id.toString(),nome=nome, idListaTreinos=id.toString()))
         EditExercicios(id.toString(),listaExercicio)
+        SaveTreinos(TrainingList)
     }
 
-
+    //Refeita ok
     @Composable
-    fun EditTreinos(idTreino:String, listaExercicio: List<Exercicio>){
-        val treinosData = GetTreinosData()
+    fun EditTreinos(idTreino:String,nome: String, listaExercicio: List<Exercicio>){
 
-        val editedTreino = GetTreinosById(idTreino)
+        TrainingList[idTreino.toInt()] = Treino(idTreino, nome = nome, idListaTreinos = idTreino)
 
-        Log.d("treinos", "Treino retornado pelo GetTreinosById: $editedTreino")
-
-        treinosData.edit().putString(idTreino,"$idTreino;${editedTreino.nome}").apply()
         EditExercicios(idTreino,listaExercicio)
+        SaveTreinos(TrainingList)
     }
 
 
@@ -170,4 +144,19 @@ object UserFuncs {
 
     }
 
+
+    @Composable
+    fun SaveTreinos(listaTreinos:List<Treino>){
+
+        val treinosData = GetTreinosData()
+
+        treinosData.edit().clear().apply()
+
+        for (treino in listaTreinos){
+
+            treinosData.edit().putString("${treino.id}","${treino.id};${treino.nome}").apply()
+
+        }
+
+    }
 }
