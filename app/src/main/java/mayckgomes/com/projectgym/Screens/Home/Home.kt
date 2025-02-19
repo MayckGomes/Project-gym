@@ -26,8 +26,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import mayckgomes.com.projectgym.funcs.System.name
 import mayckgomes.com.projectgym.funcs.UserData.GetName
+import mayckgomes.com.projectgym.ui.Components.StyledText
+import mayckgomes.com.projectgym.ui.theme.Black
 import mayckgomes.com.projectgym.ui.theme.DarkGray
 import mayckgomes.com.projectgym.ui.theme.Gray
+import mayckgomes.com.projectgym.ui.theme.White
 import mayckgomes.com.projectgym.ui.theme.Yellow
 
 @Composable
@@ -57,7 +60,7 @@ fun HomeScreen(){
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(color = Gray)
+            .background(color = Black)
             .padding(10.dp)
     ) {
         Box(
@@ -65,7 +68,7 @@ fun HomeScreen(){
             modifier = Modifier
                 .fillMaxWidth()
                 .size(75.dp)
-                .background(color = Gray)
+                .background(color = DarkGray)
                 .border(
                     width = 2.dp,
                     color = Yellow,
@@ -74,7 +77,7 @@ fun HomeScreen(){
                 .padding(15.dp)
 
         ){
-            Text("Olá, $userName", color = Color.White, fontSize = 25.sp)
+            StyledText("Olá, $userName", color = White, fontSize = 25.sp)
         }
 
         Spacer(modifier = Modifier.size(15.dp))
@@ -111,11 +114,11 @@ fun HomeScreen(){
         ){
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-                Text("Você Treinou ", color = Color.White)
+                StyledText("Você Treinou ", color = Color.White)
 
                 Spacer(Modifier.size(10.dp))
 
-                Text("$trainingDays dias", color = Color.White)
+                StyledText("$trainingDays dias", color = Color.White)
 
             }
         }
@@ -133,11 +136,11 @@ fun HomeScreen(){
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-                Text("O ultimo Treino Foi:",color = Color.White)
+                StyledText("O ultimo Treino Foi:",color = Color.White)
 
                 Spacer(Modifier.size(10.dp))
 
-                Text(lastTraining, color = Color.White)
+                StyledText(lastTraining, color = Color.White)
 
             }
 

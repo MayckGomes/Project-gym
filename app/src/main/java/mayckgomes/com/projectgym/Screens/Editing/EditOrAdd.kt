@@ -1,7 +1,6 @@
 package mayckgomes.com.projectgym.Screens.Editing
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,81 +14,91 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import mayckgomes.com.projectgym.DataTypes.Exercicio
-import mayckgomes.com.projectgym.Menu
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import mayckgomes.com.projectgym.database.exercices.Exercicies
+import mayckgomes.com.projectgym.funcs.DatabasesFuncs.AddExercicies
+import mayckgomes.com.projectgym.funcs.DatabasesFuncs.AddTreinos
+import mayckgomes.com.projectgym.funcs.DatabasesFuncs.DeleteExercicios
+import mayckgomes.com.projectgym.funcs.DatabasesFuncs.DeleteExerciciosByIdTreino
+import mayckgomes.com.projectgym.funcs.DatabasesFuncs.DeleteTreinos
+import mayckgomes.com.projectgym.funcs.DatabasesFuncs.EditTreinos
+import mayckgomes.com.projectgym.funcs.DatabasesFuncs.GetExercicios
+import mayckgomes.com.projectgym.funcs.DatabasesFuncs.GetTreinoById
 import mayckgomes.com.projectgym.funcs.MakeMessage
-import mayckgomes.com.projectgym.funcs.UserFuncs.AddTreinos
-import mayckgomes.com.projectgym.funcs.UserFuncs.EditTreinos
-import mayckgomes.com.projectgym.funcs.UserFuncs.GetExercicios
-import mayckgomes.com.projectgym.funcs.UserFuncs.GetTreinosById
+import mayckgomes.com.projectgym.funcs.title
+import mayckgomes.com.projectgym.ui.Components.StyledAlertDialog
+import mayckgomes.com.projectgym.ui.Components.StyledText
 import mayckgomes.com.projectgym.ui.Components.StyledTextField
 import mayckgomes.com.projectgym.ui.Components.StyledTextFieldNumber
+import mayckgomes.com.projectgym.ui.theme.Black
 import mayckgomes.com.projectgym.ui.theme.DarkGray
-import mayckgomes.com.projectgym.ui.theme.Gray
-import mayckgomes.com.projectgym.ui.theme.LightGray
+import mayckgomes.com.projectgym.ui.theme.White
 import mayckgomes.com.projectgym.ui.theme.Yellow
-import java.util.Collections.addAll
 
-@SuppressLint("UnrememberedMutableState")
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
-fun EditingScreen(navController:NavController, id:String){
-
-    var listExercicio: SnapshotStateList<Exercicio> = mutableStateListOf()
+fun EditingScreen(navController: NavController, id:String) {
 
     var idTreino by rememberSaveable {
-        mutableStateOf("")
+        mutableStateOf(id)
+    }
+
+    val scope = rememberCoroutineScope()
+
+    val context = LocalContext.current
+
+    var titulo by rememberSaveable {
+        mutableStateOf("Criando Treino")
     }
 
     var nomeTreino by rememberSaveable {
         mutableStateOf("")
     }
 
-    var titulo by rememberSaveable {
-        mutableStateOf("ADICIONAR TREINO")
-    }
-
-
     var nomeExercicio by rememberSaveable {
         mutableStateOf("")
     }
 
-    var repeticoes by rememberSaveable {
+    var minutos by rememberSaveable {
+        mutableStateOf("")
+    }
+
+    var segundos by rememberSaveable {
         mutableStateOf("")
     }
 
@@ -97,7 +106,7 @@ fun EditingScreen(navController:NavController, id:String){
         mutableStateOf("")
     }
 
-    var tempo by rememberSaveable {
+    var repeticoes by rememberSaveable {
         mutableStateOf("")
     }
 
@@ -105,297 +114,481 @@ fun EditingScreen(navController:NavController, id:String){
         mutableStateOf(false)
     }
 
-    var Clicked by rememberSaveable {
+    var backAlert by rememberSaveable {
         mutableStateOf(false)
     }
 
-    val context = LocalContext.current
+    var deleteAlert by rememberSaveable {
+        mutableStateOf(false)
+    }
 
-    if (id!="nada"){
-        val treino = GetTreinosById(id)
+    var deleteExerciceAlert by rememberSaveable {
+        mutableStateOf(false)
+    }
 
-        Log.d("treinos", "ta retornando treino: $treino")
+    var idDeleteExercicie by rememberSaveable {
+        mutableStateOf("")
+    }
 
-        nomeTreino = treino.nome
+    var lista:MutableStateFlow<List<Exercicies>> = MutableStateFlow(emptyList())
 
-        idTreino = treino.id
+    if (id != "nada"){
 
-        titulo = "EDITANDO: ${treino.nome}"
+        scope.launch {
 
-        val exercicios = GetExercicios(treino.idListaTreinos)
+            val treino = GetTreinoById(context, idTreino.toInt())
 
-        Log.d("exercicios", "val exercicios: $exercicios")
+            if (treino != null){
 
-        listExercicio = mutableStateListOf<Exercicio>().apply{
-            addAll(exercicios)
+                nomeTreino = treino.name
+
+            }
+
+            titulo = "Editando: $nomeTreino"
+
+            GetExercicios(context, idTreino.toInt()).collect{
+                lista.value = it
+            }
+
+        }
+
+    } else {
+
+        LaunchedEffect(Unit){
+
+            idTreino = AddTreinos(context, "editando").toString()
+
         }
     }
 
+    val listaExercicios by lista.collectAsState()
 
-    Scaffold(
+    Scaffold (
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Black),
+
         topBar = {
+
             Box(
                 contentAlignment = Alignment.CenterStart,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .size(90.dp)
+                    .size(92.dp)
                     .clip(RoundedCornerShape(0.dp, 0.dp, 12.dp, 12.dp))
-                    .background(color = LightGray)
+                    .background(color = DarkGray)
                     .padding(5.dp, 20.dp, 20.dp, 20.dp)
                     .padding(top = 25.dp)
             ){
-                Row {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
 
-                    IconButton(onClick = {navController.popBackStack()}) {
+                    IconButton(onClick = { backAlert = true }) {
                         Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = null)
                     }
 
-                    Text(titulo, color = Color.White, fontSize = 25.sp, fontWeight = FontWeight.Bold)
+                    StyledText(titulo, color = Color.White, fontSize = 25.sp, fontWeight = FontWeight.Bold)
 
                 }
             }
+
         },
+
         bottomBar = {
-            Button(
-                modifier = Modifier
-                .padding(10.dp)
-                .padding(0.dp, 0.dp, 0.dp, 35.dp)
-                .fillMaxWidth(), onClick = {Clicked = true},
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Yellow,
-                    contentColor = Color.Black
-                )) {
-                Text("Salvar")
-            }
 
-                // se for para editar treino
-            if (Clicked && id!="nada"){
+           if (id == "nada"){
 
-                navController.popBackStack()
-                EditTreinos(idTreino, nome = nomeTreino,listExercicio.toList())
-                listExercicio.clear()
-                Clicked = false
+               Button(
+                   modifier = Modifier
+                       .fillMaxWidth()
+                       .padding(10.dp, 10.dp, 10.dp, 45.dp),
+                   colors = ButtonDefaults.buttonColors(
+                       containerColor = Yellow,
+                       contentColor = Black
+                   ),
+                   onClick = {
 
+                       scope.launch {
 
-                // se for para add treino
-            } else if (Clicked && id=="nada"){
+                           EditTreinos(context, idTreino.toInt(),nomeTreino.title())
+                       }
 
-                navController.popBackStack()
-                AddTreinos(nomeTreino,listExercicio.toList())
-                listExercicio.clear()
-                Clicked = false
+                       MakeMessage(context,"Treino Criado com Sucesso!")
 
-            }
+                       navController.popBackStack()
+
+                   }
+               ) {
+
+                   StyledText("Criar Treino")
+
+               }
+
+           } else {
+
+               Row(
+                   horizontalArrangement = Arrangement.SpaceEvenly,
+                   modifier = Modifier
+                       .fillMaxWidth()
+                       .padding(10.dp, 5.dp, 10.dp, 50.dp),
+               ) {
+
+                   Button(
+                       modifier = Modifier.size(150.dp,50.dp),
+                       onClick = {deleteAlert = true},
+                       colors = ButtonDefaults.buttonColors(containerColor = Color.Red,
+                           contentColor = Black)) {
+
+                       Text("Excluir")
+
+                   }
+
+                   Button(
+                       modifier = Modifier.size(150.dp,50.dp),
+                       onClick = {
+
+                           scope.launch {
+
+                               EditTreinos(context,idTreino.toInt(), nomeTreino.title())
+                               navController.popBackStack()
+
+                           }
+
+                           MakeMessage(context,"Treino editado com sucesso")
+
+                       },
+                       colors = ButtonDefaults.buttonColors(containerColor = Yellow,
+                           contentColor = Black)) {
+
+                       Text("Editar")
+
+                   }
+
+               }
+
+           }
 
         }
 
-    ) { innerpadding ->
+    ){paddingValues ->
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(color = Gray)
-                .padding(innerpadding)
-                .padding(5.dp)
+                .background(color = Black)
+                .padding(paddingValues)
+                .padding(10.dp)
+                .verticalScroll(rememberScrollState())
         ) {
 
-            Spacer(Modifier.size(20.dp))
-
-            Text("Treino: ", color = Color.White, fontSize = 25.sp)
+            StyledText("Treino", fontSize = 25.sp, fontWeight = FontWeight.Bold)
 
             Spacer(Modifier.size(10.dp))
 
             StyledTextField(
                 value = nomeTreino,
                 onValueChange = {nomeTreino = it},
-                label = { Text("Nome do Treino", color = Yellow) }
+                label = { StyledText("Nome do Treino", color = White) }
             )
 
-            Spacer(Modifier.size(10.dp))
+            Spacer(Modifier.size(15.dp))
 
-            HorizontalDivider()
-
-            Spacer(Modifier.size(10.dp))
-
-            Text("Exercicios: ", color = Color.White, fontSize = 25.sp)
+            StyledText("Exercicios", fontWeight = FontWeight.Bold, fontSize = 25.sp)
 
             Spacer(Modifier.size(10.dp))
 
             StyledTextField(
                 value = nomeExercicio,
                 onValueChange = {nomeExercicio = it},
-                label = { Text("Nome Exercicio", color = Yellow) }
+                label = { StyledText("Nome do Exercicio", color = White) }
+            )
+
+            Spacer(Modifier.size(10.dp))
+
+            StyledTextFieldNumber(
+
+                value = series,
+                onValueChange = {series = it},
+                label = { StyledText("Séries", color = White) },
+                enabled = !isTimer
+
+            )
+
+            Spacer(Modifier.size(10.dp))
+
+            StyledTextFieldNumber(
+
+                value = repeticoes,
+                onValueChange = {repeticoes = it},
+                label = { StyledText("Repetições", color = White) },
+                enabled = !isTimer
+
+            )
+
+
+
+            Row(
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+
+                Checkbox(
+                    checked = isTimer,
+                    onCheckedChange = {isTimer = !isTimer},
+                    colors = CheckboxDefaults.colors(checkedColor = Yellow)
+                )
+
+                StyledText("É por tempo?", color = White, modifier = Modifier.clickable { isTimer = !isTimer })
+
+            }
+
+            StyledTextFieldNumber(
+
+                value = minutos,
+                onValueChange = {minutos = it},
+                label = { StyledText("Minutos", color = White) },
+                enabled = isTimer
+
+            )
+
+            Spacer(Modifier.size(10.dp))
+
+            StyledTextFieldNumber(
+
+                value = segundos,
+                onValueChange = {segundos = it},
+                label = { StyledText("Segundos", color = White) },
+                enabled = isTimer
+
             )
 
             Spacer(Modifier.size(20.dp))
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
 
-                Checkbox(
-                    checked = isTimer,
-                    onCheckedChange = {isTimer = it},
-                    colors = CheckboxDefaults.colors(
-                        checkedColor = Yellow
-                    ))
+                    when{
 
+                        isTimer && nomeExercicio.isNotEmpty() -> {
 
-                Text("É por tempo?", color = Color.White, modifier = Modifier.clickable { isTimer = !isTimer })
-            }
+                            scope.launch{
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
-
-                StyledTextFieldNumber(
-                    value = series,
-                    onValueChange = {series = it},
-                    label = { Text("Series", color = Yellow) },
-                    enabled = !isTimer,
-                )
-
-                Spacer(Modifier.size(10.dp))
-
-                StyledTextFieldNumber(
-                    value = repeticoes,
-                    onValueChange = {repeticoes = it},
-                    label = { Text("Repeticoes", color = Yellow) },
-                    enabled = !isTimer,
-
-                )
-
-                Spacer(Modifier.size(10.dp))
-
-                StyledTextFieldNumber(
-                    value = tempo,
-                    onValueChange = {tempo = it},
-                    label = { Text("Tempo", color = Yellow) },
-                    enabled = isTimer,
-                )
-
-                Spacer(Modifier.size(10.dp))
-
-                Button(
-                    onClick = {
-
-                        if (nomeExercicio.isNotEmpty()){
-
-                            when{
-                                isTimer && tempo.toIntOrNull() != null -> listExercicio.add(
-                                    Exercicio(nome = nomeExercicio, series = tempo.toInt(), repeticoes = -1))
-
-
-                                !isTimer && series.toIntOrNull() != null && repeticoes.toIntOrNull() != null -> listExercicio.add(
-                                    Exercicio(
-                                        nome = nomeExercicio,
-                                        series = series.toInt(),
-                                        repeticoes = repeticoes.toInt()
-                                    )
+                                AddExercicies(context, Exercicies(
+                                    idTraining = idTreino.toInt(),
+                                    name = nomeExercicio.title(),
+                                    series = if (minutos == "" && segundos == "") 0 else (minutos.toInt()*60)+segundos.toInt(),
+                                    repeticoes = -1)
                                 )
 
-                                else -> MakeMessage(context,"Preencha os campos Corretamente")
+                                nomeExercicio = ""
+
+                                minutos = ""
+                                segundos = ""
 
                             }
-
-                        } else {
-                            MakeMessage(context,"Coloque um nome ao exercicio")
                         }
 
-                        series = ""
-                        repeticoes = ""
-                        tempo = ""
+                        !isTimer && nomeExercicio.isNotEmpty() -> {
 
-                    },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Yellow,
-                        contentColor = Color.Black
-                    )
-                ) {
-                    Text("Salvar")
-                }
+                            scope.launch {
 
+                                AddExercicies(context,Exercicies(
+                                    idTraining = idTreino.toInt(),
+                                    name = nomeExercicio.title(),
+                                    series = if (series == "") 0 else series.toInt(),
+                                    repeticoes = if (repeticoes == "") 0 else repeticoes.toInt()
+                                ))
+
+                                nomeExercicio = ""
+
+                                series = ""
+                                repeticoes = ""
+
+                            }
+                        }
+
+                        else -> MakeMessage(context, "Preencha os Campos Corretamente")
+
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Yellow, contentColor = Black)) {
+                StyledText("Adicionar Exercicio", fontWeight = FontWeight.Bold)
             }
-
-            Spacer(Modifier.size(20.dp))
-
-            Text("Lista Exercicios: ", color = Color.White, fontSize = 25.sp)
 
             Spacer(Modifier.size(10.dp))
 
-            if(listExercicio.isEmpty()){
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(color = LightGray),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text("Ainda não há Exercicios nesse treino!!",color = Color.White)
-                }
-            } else {
+            StyledText("Lista de Exercicios", fontSize = 25.sp, fontWeight = FontWeight.Bold)
 
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(color = LightGray)
-                ) {
-                    items(listExercicio){ exercicio ->
+            Spacer(Modifier.size(10.dp))
 
-                        Box(modifier = Modifier
-                            .fillMaxWidth(1f)
-                            .clip(RoundedCornerShape(12.dp))
-                            .background(color = DarkGray)
-                            .padding(10.dp)){
-                            Row(
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth(1f)
-                            ) {
-                                Column {
-                                    Text(exercicio.nome, color = Color.White, fontSize = 25.sp)
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .size(500.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .background(color = DarkGray)
 
-                                    Spacer(Modifier.size(5.dp))
-                                    if (exercicio.repeticoes == -1){
+            ) {
 
-                                        Text("Tempo: ${exercicio.series} minutos",color = Color.White)
+               if (listaExercicios.isNotEmpty()){
 
-                                    } else {
+                   LazyColumn(
+                       modifier = Modifier
+                           .fillMaxSize()
+                           .padding(6.dp)
+                   ) {
 
-                                        Text("Series: ${exercicio.series}",color = Color.White)
+                       items(listaExercicios){exercicios ->
 
-                                        Spacer(Modifier.size(5.dp))
+                           Row(
+                               horizontalArrangement = Arrangement.SpaceBetween,
+                               modifier = Modifier
+                                   .fillMaxWidth(1f)
+                                   .clip(RoundedCornerShape(12.dp))
+                                   .background(color = Black)
+                                   .padding(15.dp)
+                           ) {
+                               Column {
 
-                                        Text("Repetições: ${exercicio.repeticoes}",color = Color.White)
+                                   StyledText(exercicios.name, fontWeight = FontWeight.Bold, fontSize = 30.sp)
 
-                                    }
+                                   Spacer(Modifier.size(5.dp))
 
-                                }
+                                   if (exercicios.repeticoes == -1){
 
-                                IconButton(onClick = {listExercicio.remove(Exercicio(nome = exercicio.nome, series = exercicio.series, repeticoes = exercicio.repeticoes))}) {
-                                    Icon(Icons.Default.Delete,contentDescription = null, tint = Color.Red)
-                                }
-                            }
+                                       StyledText("${exercicios.series/60} minutos, ${exercicios.series%60} segundos")
 
-                        }
+                                   } else {
 
-                        Spacer(Modifier.size(10.dp))
+                                       StyledText("Séries: ${exercicios.series}")
 
-                    }
+                                       Spacer(Modifier.size(5.dp))
 
-                }
+                                       StyledText("Repetições: ${exercicios.repeticoes}")
+
+                                   }
+
+                               }
+
+                               IconButton(onClick = { deleteExerciceAlert = true
+                               idDeleteExercicie = exercicios.id.toString()}) {
+                                   Icon(Icons.Default.Delete,contentDescription = null, tint = Color.Red)
+                               }
+
+                           }
+
+                           Spacer(Modifier.size(10.dp))
+
+                       }
+
+                   }
+
+               } else {
+
+                   Column(
+                       horizontalAlignment = Alignment.CenterHorizontally,
+                       verticalArrangement = Arrangement.Center
+                   ) {
+
+                       StyledText("Ainda não há exercicios nesse treino", fontWeight = FontWeight.Bold)
+
+                   }
+
+               }
 
             }
 
         }
+
+    }
+
+    if (backAlert && id == "nada" ){
+
+        StyledAlertDialog(
+            title = "Alerta",
+            text = "Deseja mesmo não criar o treino?",
+            confirmButton = {
+                scope.launch {
+                    backAlert = false
+
+                    DeleteTreinos(context, idTreino.toInt())
+
+                    navController.popBackStack()
+                }
+            },
+            onDismissRequest = {backAlert = false},
+            icon = Icons.Default.Warning
+
+        )
+
+    } else if (backAlert && id != "nada" ){
+
+        StyledAlertDialog(
+            title = "Alerta",
+            text = "Deseja mesmo não editar mais o treino?",
+            confirmButton = {
+
+                backAlert = false
+
+                navController.popBackStack()
+            },
+            onDismissRequest = {backAlert = false},
+            icon = Icons.Default.Warning
+
+        )
+
+    }
+
+    if (deleteAlert){
+        StyledAlertDialog(
+            title = "Alerta",
+            text = "Deseja mesmo excluir o treino?",
+            confirmButton = {
+                navController.popBackStack()
+
+                scope.launch {
+                    deleteAlert = false
+
+                    DeleteTreinos(context,idTreino.toInt())
+
+                    DeleteExerciciosByIdTreino(context, idTreino.toInt())
+                }
+
+                MakeMessage(context,"Treino excluido com sucesso")
+            },
+            onDismissRequest = {deleteAlert = false},
+            icon = Icons.Default.Warning
+        )
+    }
+
+    if (deleteExerciceAlert){
+
+        StyledAlertDialog(
+            title = "Alerta",
+            text = "Deseja mesmo apagar esse exercicio?",
+            onDismissRequest = { deleteExerciceAlert = false},
+            confirmButton = {
+
+                scope.launch {
+                    deleteExerciceAlert = false
+
+                    DeleteExercicios(context, idDeleteExercicie.toInt())
+                    idDeleteExercicie = ""
+                }
+
+            },
+            icon = Icons.Default.Warning
+        )
+
     }
 
 }
 
-@Preview
+@Preview(showSystemUi = true)
 @Composable
 fun EditingScreenPreview(){
-    EditingScreen(navController = rememberNavController(),id="nada")
+    EditingScreen(navController = rememberNavController(),"0")
 }

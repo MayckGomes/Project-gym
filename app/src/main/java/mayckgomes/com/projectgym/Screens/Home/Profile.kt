@@ -32,9 +32,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import mayckgomes.com.projectgym.funcs.System
 import mayckgomes.com.projectgym.funcs.UserData.EditName
-import mayckgomes.com.projectgym.funcs.UserData.GetName
-import mayckgomes.com.projectgym.ui.theme.Gray
-import mayckgomes.com.projectgym.ui.theme.LightGray
+import mayckgomes.com.projectgym.funcs.title
+import mayckgomes.com.projectgym.ui.Components.StyledText
+import mayckgomes.com.projectgym.ui.Components.StyledTextField
+import mayckgomes.com.projectgym.ui.theme.Black
+import mayckgomes.com.projectgym.ui.theme.DarkGray
+import mayckgomes.com.projectgym.ui.theme.White
 import mayckgomes.com.projectgym.ui.theme.Yellow
 
 @Composable
@@ -62,10 +65,10 @@ fun ProfileScreen(){
                     .fillMaxWidth()
                     .size(70.dp)
                     .clip(RoundedCornerShape(0.dp,0.dp,12.dp,12.dp))
-                    .background(LightGray)
+                    .background(DarkGray)
                     .padding(20.dp)
             ){
-                Text("PERFIL", color = Color.White, fontSize = 25.sp, fontWeight = FontWeight.Bold)
+                StyledText("PERFIL", color = Color.White, fontSize = 25.sp, fontWeight = FontWeight.Bold)
             }
         }
     ){innerpadding ->
@@ -74,7 +77,7 @@ fun ProfileScreen(){
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
             .fillMaxSize()
-            .background(Gray)
+            .background(Black)
             .padding(innerpadding)) {
 
             Spacer(Modifier.size(65.dp))
@@ -83,14 +86,14 @@ fun ProfileScreen(){
 
             Spacer(Modifier.size(65.dp))
 
-            Text("Olá, $userName", color = Color.White, fontSize = 30.sp)
+            StyledText("Olá, $userName", color = Color.White, fontSize = 30.sp)
 
             Spacer(Modifier.size(65.dp))
 
-            OutlinedTextField(
+            StyledTextField(
                 value = newName,
                 onValueChange = {newName = it},
-                label = { Text("Editar Nome") }
+                label = { StyledText("Editar Nome", color = White) }
             )
 
             Spacer(Modifier.size(20.dp))
@@ -98,13 +101,16 @@ fun ProfileScreen(){
             Button(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Yellow,
-                    contentColor = Color.Black),
+                    contentColor = White),
                 onClick = {isClicked = true}) {
                 Text("Salvar")
             }
 
             if(isClicked){
-                EditName(newName)
+                EditName(newName.title())
+                userName = newName.title()
+
+                newName = ""
             }
 
         }

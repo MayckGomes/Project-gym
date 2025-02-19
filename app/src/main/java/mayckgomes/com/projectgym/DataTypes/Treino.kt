@@ -6,5 +6,4 @@ import kotlinx.serialization.Serializable
 data class Treino(
     val id:String,
     val nome:String,
-    val idListaTreinos:String
 )

@@ -2,22 +2,18 @@ package mayckgomes.com.projectgym.funcs
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.descriptors.StructureKind
-import mayckgomes.com.projectgym.DataTypes.Treino
+import kotlinx.coroutines.flow.MutableStateFlow
 import mayckgomes.com.projectgym.Screens.Home.HomeScreen
 import mayckgomes.com.projectgym.Screens.Home.ProfileScreen
-import mayckgomes.com.projectgym.Screens.Home.TrainingScreen
-import mayckgomes.com.projectgym.funcs.UserData.GetName
-import mayckgomes.com.projectgym.funcs.UserFuncs.GetTreinos
+import mayckgomes.com.projectgym.Screens.Home.TrainingNamesScreen
+import mayckgomes.com.projectgym.database.training.Training
 
-@OptIn(ExperimentalSerializationApi::class)
 @Composable
-fun Tela(tela:String,navController: NavController){
+fun Tela(tela:String, navController: NavController, listaTreinos: MutableStateFlow<List<Training>>){
 
     when (tela){
         "Home" -> HomeScreen()
-        "Treino" -> TrainingScreen(navController)
+        "Treino" -> TrainingNamesScreen(navController,listaTreinos)
         "Perfil" -> ProfileScreen()
     }
 
