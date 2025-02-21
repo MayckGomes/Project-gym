@@ -31,7 +31,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -48,7 +47,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import mayckgomes.com.projectgym.database.exercices.Exercicies
 import mayckgomes.com.projectgym.funcs.DatabasesFuncs.AddExercicies
@@ -57,9 +55,11 @@ import mayckgomes.com.projectgym.funcs.DatabasesFuncs.DeleteExercicios
 import mayckgomes.com.projectgym.funcs.DatabasesFuncs.DeleteExerciciosByIdTreino
 import mayckgomes.com.projectgym.funcs.DatabasesFuncs.DeleteTreinos
 import mayckgomes.com.projectgym.funcs.DatabasesFuncs.EditTreinos
-import mayckgomes.com.projectgym.funcs.DatabasesFuncs.GetExercicios
+import mayckgomes.com.projectgym.funcs.DatabasesFuncs.GetListExercicies
 import mayckgomes.com.projectgym.funcs.DatabasesFuncs.GetTreinoById
+import mayckgomes.com.projectgym.funcs.DatabasesFuncs.GetTreinosList
 import mayckgomes.com.projectgym.funcs.MakeMessage
+import mayckgomes.com.projectgym.funcs.System.TrainingList
 import mayckgomes.com.projectgym.funcs.title
 import mayckgomes.com.projectgym.ui.Components.StyledAlertDialog
 import mayckgomes.com.projectgym.ui.Components.StyledText
@@ -84,6 +84,10 @@ fun EditingScreen(navController: NavController, id:String) {
 
     var titulo by rememberSaveable {
         mutableStateOf("Criando Treino")
+    }
+
+    var listaExercicios by rememberSaveable {
+        mutableStateOf(emptyList<Exercicies>())
     }
 
     var nomeTreino by rememberSaveable {
@@ -130,8 +134,6 @@ fun EditingScreen(navController: NavController, id:String) {
         mutableStateOf("")
     }
 
-    var lista:MutableStateFlow<List<Exercicies>> = MutableStateFlow(emptyList())
-
     if (id != "nada"){
 
         scope.launch {
@@ -146,9 +148,7 @@ fun EditingScreen(navController: NavController, id:String) {
 
             titulo = "Editando: $nomeTreino"
 
-            GetExercicios(context, idTreino.toInt()).collect{
-                lista.value = it
-            }
+            listaExercicios = GetListExercicies(context, idTreino.toInt())
 
         }
 
@@ -156,13 +156,12 @@ fun EditingScreen(navController: NavController, id:String) {
 
         LaunchedEffect(Unit){
 
-            idTreino = AddTreinos(context, "editando").toString()
+            idTreino = AddTreinos(context, "criando").toString()
+
+            listaExercicios = GetListExercicies(context, idTreino.toInt())
 
         }
     }
-
-    val listaExercicios by lista.collectAsState()
-
     Scaffold (
         modifier = Modifier
             .fillMaxSize()
@@ -179,7 +178,7 @@ fun EditingScreen(navController: NavController, id:String) {
                     .background(color = DarkGray)
                     .padding(5.dp, 20.dp, 20.dp, 20.dp)
                     .padding(top = 25.dp)
-            ){
+            ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -188,11 +187,15 @@ fun EditingScreen(navController: NavController, id:String) {
                         Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = null)
                     }
 
-                    StyledText(titulo, color = Color.White, fontSize = 25.sp, fontWeight = FontWeight.Bold)
+                    StyledText(
+                        titulo,
+                        color = Color.White,
+                        fontSize = 25.sp,
+                        fontWeight = FontWeight.Bold
+                    )
 
                 }
             }
-
         },
 
         bottomBar = {
@@ -373,16 +376,22 @@ fun EditingScreen(navController: NavController, id:String) {
 
                         isTimer && nomeExercicio.isNotEmpty() -> {
 
+                            if (minutos == "") {minutos = "0"}
+                            if (segundos == ""){segundos = "0"}
+
                             scope.launch{
 
                                 AddExercicies(context, Exercicies(
                                     idTraining = idTreino.toInt(),
                                     name = nomeExercicio.title(),
-                                    series = if (minutos == "" && segundos == "") 0 else (minutos.toInt()*60)+segundos.toInt(),
+                                    series = (minutos.toInt()*60)+segundos.toInt(),
                                     repeticoes = -1)
                                 )
 
+                                listaExercicios = GetListExercicies(context, idTreino.toInt())
+
                                 nomeExercicio = ""
+
 
                                 minutos = ""
                                 segundos = ""
@@ -400,6 +409,8 @@ fun EditingScreen(navController: NavController, id:String) {
                                     series = if (series == "") 0 else series.toInt(),
                                     repeticoes = if (repeticoes == "") 0 else repeticoes.toInt()
                                 ))
+
+                                listaExercicios = GetListExercicies(context, idTreino.toInt())
 
                                 nomeExercicio = ""
 
@@ -446,14 +457,16 @@ fun EditingScreen(navController: NavController, id:String) {
                            Row(
                                horizontalArrangement = Arrangement.SpaceBetween,
                                modifier = Modifier
-                                   .fillMaxWidth(1f)
+                                   .fillMaxWidth()
                                    .clip(RoundedCornerShape(12.dp))
                                    .background(color = Black)
                                    .padding(15.dp)
                            ) {
-                               Column {
-
-                                   StyledText(exercicios.name, fontWeight = FontWeight.Bold, fontSize = 30.sp)
+                               Column(
+                                   modifier = Modifier
+                                       .fillMaxWidth(0.7f)
+                               ) {
+                                   StyledText(exercicios.name, fontWeight = FontWeight.Bold, fontSize = 25.sp)
 
                                    Spacer(Modifier.size(5.dp))
 
@@ -577,6 +590,8 @@ fun EditingScreen(navController: NavController, id:String) {
 
                     DeleteExercicios(context, idDeleteExercicie.toInt())
                     idDeleteExercicie = ""
+
+                    listaExercicios = GetListExercicies(context, idTreino.toInt())
                 }
 
             },

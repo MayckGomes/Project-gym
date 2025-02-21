@@ -22,6 +22,9 @@ interface trainingDAO {
     @Query("SELECT * FROM trainings")
     fun getAll(): Flow<List<Training>>
 
+    @Query("SELECT * FROM trainings")
+    suspend fun getAllList(): List<Training>
+
     @Query("SELECT * FROM trainings WHERE id = :id")
     suspend fun getTrainingById(id:Int):Training
 

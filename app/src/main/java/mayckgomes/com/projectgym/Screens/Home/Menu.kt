@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import mayckgomes.com.projectgym.DataTypes.NavBarItem
 import mayckgomes.com.projectgym.funcs.System
+import mayckgomes.com.projectgym.funcs.System.TrainingList
 import mayckgomes.com.projectgym.funcs.Tela
 import mayckgomes.com.projectgym.ui.Components.StyledText
 import mayckgomes.com.projectgym.ui.theme.Black
@@ -116,9 +117,10 @@ fun Menu(navController: NavController){
                 .background(color = Gray)
         ) {
 
+
             System.loadData(LocalContext.current)
 
-            Tela(telaName, navController = navController,System.TrainingList)
+            Tela(telaName, navController = navController, TrainingList)
         }
     }
 

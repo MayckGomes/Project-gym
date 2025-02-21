@@ -34,14 +34,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import mayckgomes.com.projectgym.EditOrAddTreino
 import mayckgomes.com.projectgym.Training
-import mayckgomes.com.projectgym.database.exercices.Exercicies
 import mayckgomes.com.projectgym.funcs.DatabasesFuncs.GetListExercicies
 import mayckgomes.com.projectgym.funcs.MakeMessage
+import mayckgomes.com.projectgym.funcs.title
 import mayckgomes.com.projectgym.ui.Components.StyledText
 import mayckgomes.com.projectgym.ui.theme.Black
 import mayckgomes.com.projectgym.ui.theme.DarkGray
@@ -105,7 +104,7 @@ fun TrainingNamesScreen(navController: NavController, lista: MutableStateFlow<Li
 
                        Spacer(Modifier.size(1.dp))
 
-                       StyledText( treino.name , color = Color.White, fontSize = 25.sp)
+                       StyledText( treino.name.title() , color = Color.White, fontSize = 25.sp)
 
                        Column(
                            horizontalAlignment = Alignment.CenterHorizontally,

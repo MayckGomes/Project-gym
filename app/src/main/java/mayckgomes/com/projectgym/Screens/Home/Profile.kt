@@ -86,7 +86,7 @@ fun ProfileScreen(){
 
             Spacer(Modifier.size(65.dp))
 
-            StyledText("Olá, $userName", color = Color.White, fontSize = 30.sp)
+            StyledText("Olá, ${userName.title()}", color = Color.White, fontSize = 30.sp)
 
             Spacer(Modifier.size(65.dp))
 
@@ -107,10 +107,8 @@ fun ProfileScreen(){
             }
 
             if(isClicked){
-                EditName(newName.title())
-                userName = newName.title()
-
-                newName = ""
+                EditName(newName)
+                userName = newName
             }
 
         }

@@ -24,8 +24,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import mayckgomes.com.projectgym.funcs.System
+import mayckgomes.com.projectgym.funcs.System.LastTraining
 import mayckgomes.com.projectgym.funcs.System.name
 import mayckgomes.com.projectgym.funcs.UserData.GetName
+import mayckgomes.com.projectgym.funcs.title
+import mayckgomes.com.projectgym.ui.Components.StyledNameDialog
 import mayckgomes.com.projectgym.ui.Components.StyledText
 import mayckgomes.com.projectgym.ui.theme.Black
 import mayckgomes.com.projectgym.ui.theme.DarkGray
@@ -36,10 +40,8 @@ import mayckgomes.com.projectgym.ui.theme.Yellow
 @Composable
 fun HomeScreen(){
 
-    val name = name
-
     var userName by rememberSaveable {
-        mutableStateOf(name)
+        mutableStateOf("")
     }
 
     // tempo em segundos
@@ -52,10 +54,26 @@ fun HomeScreen(){
     }
 
     var lastTraining by rememberSaveable {
-        mutableStateOf("Treino A")
+        mutableStateOf(LastTraining)
     }
 
+    var dialog by rememberSaveable {
+        mutableStateOf(false)
+    }
 
+    if (name == "Usuario"){
+        dialog = true
+    } else {
+
+        userName = name
+
+    }
+
+    if (dialog){
+
+        userName = StyledNameDialog(onDismissRequest = {dialog = false})
+
+    }
 
     Column(
         modifier = Modifier
@@ -77,7 +95,7 @@ fun HomeScreen(){
                 .padding(15.dp)
 
         ){
-            StyledText("Olá, $userName", color = White, fontSize = 25.sp)
+            StyledText("Olá, ${userName.title()}", color = White, fontSize = 25.sp)
         }
 
         Spacer(modifier = Modifier.size(15.dp))

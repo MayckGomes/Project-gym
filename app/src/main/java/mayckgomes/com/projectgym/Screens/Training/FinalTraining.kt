@@ -62,7 +62,8 @@ fun FinalTrainingScreen(navController: NavController,nomeTraining: String){
             ) {
 
                 Button(
-                    onClick = {navController.navigate(mayckgomes.com.projectgym.Menu)},
+                    onClick = {navController.popBackStack()
+                              navController.popBackStack()},
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Yellow,
                         contentColor = Black

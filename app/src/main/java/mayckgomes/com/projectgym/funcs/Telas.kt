@@ -9,11 +9,11 @@ import mayckgomes.com.projectgym.Screens.Home.TrainingNamesScreen
 import mayckgomes.com.projectgym.database.training.Training
 
 @Composable
-fun Tela(tela:String, navController: NavController, listaTreinos: MutableStateFlow<List<Training>>){
+fun Tela(tela:String, navController: NavController, lista: MutableStateFlow<List<Training>>){
 
     when (tela){
         "Home" -> HomeScreen()
-        "Treino" -> TrainingNamesScreen(navController,listaTreinos)
+        "Treino" -> TrainingNamesScreen(navController, lista)
         "Perfil" -> ProfileScreen()
     }
 

@@ -53,11 +53,17 @@ object DatabasesFuncs {
         return exercicesActions
     }
 
+    suspend fun GetTreinos(context: Context): Flow<List<Training>> {
 
-    fun GetTreinos(context: Context): Flow<List<Training>> {
         val db = GetTreinosDB(context)
 
         return db.getAll()
+    }
+
+    suspend fun GetTreinosList(context: Context): List<Training> {
+        val db = GetTreinosDB(context)
+
+        return db.getAllList()
     }
 
 
@@ -68,15 +74,6 @@ object DatabasesFuncs {
         var training = db.getTrainingById(idTreino)
 
         return training
-    }
-
-
-    fun GetExercicios(context: Context, id:Int): Flow<List<Exercicies>> {
-
-        val db = GetExerciciosDB(context)
-
-        return db.GetAllById(id)
-
     }
 
     suspend fun GetListExercicies(context: Context,id: Int):List<Exercicies>{

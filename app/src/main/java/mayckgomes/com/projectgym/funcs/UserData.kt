@@ -27,4 +27,23 @@ object UserData{
         UserData.edit().putString("Nome",name).apply()
     }
 
+    @Composable
+    fun GetLastTraining(): String {
+
+        val userData = LocalContext.current.getSharedPreferences("lastTraining", Context.MODE_PRIVATE)
+
+        return userData.getString("training","Você ainda não treinou")!!
+    }
+
+
+    @Composable
+    fun EditLastTraining(training: String){
+
+        val userData = LocalContext.current.getSharedPreferences("lastTraining", Context.MODE_PRIVATE)
+
+        userData.edit().putString("training",training).apply()
+
+        System.LastTraining = training
+
+    }
 }
