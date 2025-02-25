@@ -22,9 +22,13 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,12 +44,17 @@ import mayckgomes.com.projectgym.EditOrAddTreino
 import mayckgomes.com.projectgym.Training
 import mayckgomes.com.projectgym.funcs.DatabasesFuncs.GetListExercicies
 import mayckgomes.com.projectgym.funcs.MakeMessage
+import mayckgomes.com.projectgym.funcs.System.DaysTraining
+import mayckgomes.com.projectgym.funcs.System.LastDayTraining
+import mayckgomes.com.projectgym.funcs.UserData.EditDaysTraining
+import mayckgomes.com.projectgym.funcs.UserData.EditLastDayTraining
 import mayckgomes.com.projectgym.funcs.title
 import mayckgomes.com.projectgym.ui.Components.StyledText
 import mayckgomes.com.projectgym.ui.theme.Black
 import mayckgomes.com.projectgym.ui.theme.DarkGray
 import mayckgomes.com.projectgym.ui.theme.Gray
 import mayckgomes.com.projectgym.ui.theme.Yellow
+import java.time.LocalDate
 
 @Composable
 fun TrainingNamesScreen(navController: NavController, lista: MutableStateFlow<List<mayckgomes.com.projectgym.database.training.Training>>){
@@ -55,6 +64,10 @@ fun TrainingNamesScreen(navController: NavController, lista: MutableStateFlow<Li
     val context = LocalContext.current
 
     val listaTreinos by lista.collectAsState()
+
+    var startTraining by rememberSaveable {
+        mutableStateOf(false)
+    }
 
     Scaffold(
        topBar = {
@@ -122,11 +135,17 @@ fun TrainingNamesScreen(navController: NavController, lista: MutableStateFlow<Li
 
                                        val lista = GetListExercicies(context, treino.id)
 
-                                       if (lista.isEmpty()){
+                                       if (treino.name == "criando"){
 
-                                           MakeMessage(context,"Não Há Exercicios nesse treino")
+                                           MakeMessage(context,"Termine de criar o treino para começar a treinar")
+
+                                       } else if (lista.isEmpty()){
+
+                                           MakeMessage(context, "Não Há Exercicios nesse treino")
 
                                        } else {
+
+                                           startTraining = true
 
                                            navController.navigate(Training(treino.id))
 
@@ -167,7 +186,32 @@ fun TrainingNamesScreen(navController: NavController, lista: MutableStateFlow<Li
            ) {
                StyledText("Não Há Treinos Criados!!")
            }
-
        }
+
+
+        if (startTraining){
+
+            startTraining = false
+
+            if (DaysTraining == 0){
+
+                DaysTraining++
+
+                EditDaysTraining(DaysTraining)
+
+                EditLastDayTraining(LocalDate.now().toString())
+
+            } else if (LastDayTraining != LocalDate.now().toString()){
+
+                DaysTraining++
+
+                EditDaysTraining(DaysTraining)
+
+                EditLastDayTraining(LocalDate.now().toString())
+
+            }
+
+        }
+
     }
 }

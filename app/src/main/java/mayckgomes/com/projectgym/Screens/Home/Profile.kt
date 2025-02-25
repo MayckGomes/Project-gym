@@ -101,7 +101,7 @@ fun ProfileScreen(){
             Button(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Yellow,
-                    contentColor = White),
+                    contentColor = Black),
                 onClick = {isClicked = true}) {
                 Text("Salvar")
             }

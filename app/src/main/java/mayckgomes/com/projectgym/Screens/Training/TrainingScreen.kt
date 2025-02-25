@@ -1,7 +1,6 @@
 package mayckgomes.com.projectgym.Screens.Training
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -45,7 +44,7 @@ import mayckgomes.com.projectgym.funcs.DatabasesFuncs.GetTreinoById
 import mayckgomes.com.projectgym.funcs.StartTimer
 import mayckgomes.com.projectgym.funcs.StartTimerInReverse
 import mayckgomes.com.projectgym.funcs.UserData.EditLastTraining
-import mayckgomes.com.projectgym.funcs.systemTimer
+import mayckgomes.com.projectgym.funcs.SystemTimer
 import mayckgomes.com.projectgym.ui.Components.StyledAlertDialog
 import mayckgomes.com.projectgym.ui.Components.StyledText
 import mayckgomes.com.projectgym.ui.theme.Black
@@ -97,7 +96,7 @@ fun TrainingScreen(navController: NavController,idTraining:Int){
 
             listExercicies = GetListExercicies(context,idTraining)
 
-            systemTimer.start()
+            SystemTimer.start()
 
             isLoading = false
 
@@ -166,7 +165,7 @@ fun TrainingScreen(navController: NavController,idTraining:Int){
                         TextButton(onClick = {
                             if ((actualExercicies+1)==listExercicies.size){
 
-                                systemTimer.stop()
+                                SystemTimer.stop()
 
                                 navController.navigate(FinalTraining(titulo))
 
@@ -226,11 +225,11 @@ fun TrainingScreen(navController: NavController,idTraining:Int){
 
                             } else {
 
-                                StyledText("Minutos :${series%60}")
+                                StyledText("Minutos : ${series/60}")
 
                                 Spacer(Modifier.size(10.dp))
 
-                                StyledText("Segundos :${series/60}")
+                                StyledText("Segundos : ${series%60}")
                             }
                         }
                     }
@@ -257,7 +256,7 @@ fun TrainingScreen(navController: NavController,idTraining:Int){
 
                         isClicked = false
 
-                        systemTimer.stop()
+                        SystemTimer.stop()
 
                         navController.navigate(FinalTraining(titulo))
 

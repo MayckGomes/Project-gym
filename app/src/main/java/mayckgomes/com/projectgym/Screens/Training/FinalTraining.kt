@@ -13,24 +13,27 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType.Companion.Text
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import mayckgomes.com.projectgym.R
-import mayckgomes.com.projectgym.funcs.systemTimer
-import mayckgomes.com.projectgym.funcs.systemTimer.time
-import mayckgomes.com.projectgym.funcs.systemTimer.timer
+import mayckgomes.com.projectgym.funcs.System.MediaDaysTraining
+import mayckgomes.com.projectgym.funcs.SystemTimer
+import mayckgomes.com.projectgym.funcs.SystemTimer.time
+import mayckgomes.com.projectgym.funcs.UserData.AddMediaTimeTraining
+import mayckgomes.com.projectgym.funcs.UserData.GetMediaTimeTraining
 import mayckgomes.com.projectgym.ui.Components.StyledText
 import mayckgomes.com.projectgym.ui.theme.Black
 import mayckgomes.com.projectgym.ui.theme.Yellow
@@ -42,11 +45,15 @@ fun FinalTrainingScreen(navController: NavController,nomeTraining: String){
         mutableStateOf(0)
     }
 
+    var isClicked by rememberSaveable {
+        mutableStateOf(false)
+    }
+
     LaunchedEffect(Unit) {
 
         timeTraining = time.value
 
-        systemTimer.clear()
+        SystemTimer.clear()
 
     }
 
@@ -62,8 +69,13 @@ fun FinalTrainingScreen(navController: NavController,nomeTraining: String){
             ) {
 
                 Button(
-                    onClick = {navController.popBackStack()
-                              navController.popBackStack()},
+                    onClick = {
+
+                        isClicked = true
+
+                        navController.popBackStack()
+                        navController.popBackStack()
+                    },
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Yellow,
                         contentColor = Black
@@ -86,15 +98,15 @@ fun FinalTrainingScreen(navController: NavController,nomeTraining: String){
                 .padding(paddingValues)
                 .padding(10.dp)
         ) {
-            StyledText("Parabens!!", fontWeight = FontWeight.Bold, fontSize = 25.sp)
+            Text("Parabéns!!", fontWeight = FontWeight.Bold, fontSize = 25.sp)
 
-            Spacer(Modifier.size(10.dp))
+            Spacer(Modifier.size(15.dp))
 
             StyledText("Você chegou ao fim do treino: $nomeTraining !")
 
             Spacer(Modifier.size(10.dp))
 
-            StyledText("Você terminou em ${timeTraining / 3600} horas, ${(timeTraining % 3600) / 60} minutos e ${timeTraining % 60} segundos")
+            StyledText("Você terminou em \n${timeTraining / 3600} horas, ${(timeTraining % 3600) / 60} minutos e ${timeTraining % 60} segundos")
 
             Spacer(Modifier.size(30.dp))
 
@@ -102,6 +114,15 @@ fun FinalTrainingScreen(navController: NavController,nomeTraining: String){
 
         }
 
-    }
+        if (isClicked){
 
+            isClicked = false
+
+            AddMediaTimeTraining(timeTraining)
+
+            MediaDaysTraining = GetMediaTimeTraining()
+
+        }
+
+    }
 }

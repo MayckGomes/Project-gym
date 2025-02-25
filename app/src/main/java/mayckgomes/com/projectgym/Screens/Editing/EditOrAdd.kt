@@ -307,7 +307,20 @@ fun EditingScreen(navController: NavController, id:String) {
                 label = { StyledText("Nome do Exercicio", color = White) }
             )
 
-            Spacer(Modifier.size(10.dp))
+            Row(
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
+            ){
+
+                Checkbox(
+                    checked = isTimer,
+                    onCheckedChange = {isTimer = !isTimer},
+                    colors = CheckboxDefaults.colors(checkedColor = Yellow)
+                )
+
+                StyledText("É por tempo?", color = White, modifier = Modifier.clickable { isTimer = !isTimer })
+
+            }
 
             StyledTextFieldNumber(
 
@@ -329,22 +342,7 @@ fun EditingScreen(navController: NavController, id:String) {
 
             )
 
-
-
-            Row(
-                horizontalArrangement = Arrangement.Start,
-                verticalAlignment = Alignment.CenterVertically
-            ){
-
-                Checkbox(
-                    checked = isTimer,
-                    onCheckedChange = {isTimer = !isTimer},
-                    colors = CheckboxDefaults.colors(checkedColor = Yellow)
-                )
-
-                StyledText("É por tempo?", color = White, modifier = Modifier.clickable { isTimer = !isTimer })
-
-            }
+            Spacer(Modifier.size(10.dp))
 
             StyledTextFieldNumber(
 

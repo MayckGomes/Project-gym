@@ -53,9 +53,10 @@ fun StyledNameDialog(
             contentAlignment = Alignment.TopCenter,
             modifier = Modifier
                 .height(250.dp)
+                .clip(RoundedCornerShape(20.dp))
                 .background(color = Gray)
                 .padding(15.dp)
-                .clip(RoundedCornerShape(10.dp))
+
 
 
         ){

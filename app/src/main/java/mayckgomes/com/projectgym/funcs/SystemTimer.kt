@@ -1,17 +1,14 @@
 package mayckgomes.com.projectgym.funcs
 
-import androidx.compose.runtime.remember
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-object systemTimer {
+object SystemTimer {
 
     private val coroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
