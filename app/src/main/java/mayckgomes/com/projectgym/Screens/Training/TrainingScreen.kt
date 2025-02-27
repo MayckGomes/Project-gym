@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -139,7 +140,7 @@ fun TrainingScreen(navController: NavController,idTraining:Int){
                         ) {
 
                             IconButton(onClick = { isClicked = true}) {
-                                Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = null)
+                                Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = null, tint= MaterialTheme.colorScheme.surface)
                             }
 
                             StyledText(titulo, color = Color.White, fontSize = 25.sp, fontWeight = FontWeight.Bold)

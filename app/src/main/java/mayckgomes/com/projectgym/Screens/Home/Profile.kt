@@ -14,7 +14,7 @@ import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -53,7 +53,7 @@ fun ProfileScreen(){
         mutableStateOf(false)
     }
 
-    var userName by rememberSaveable {
+    val userName by rememberSaveable {
         mutableStateOf(name)
     }
 
@@ -65,10 +65,10 @@ fun ProfileScreen(){
                     .fillMaxWidth()
                     .size(70.dp)
                     .clip(RoundedCornerShape(0.dp,0.dp,12.dp,12.dp))
-                    .background(DarkGray)
+                    .background(color = DarkGray)
                     .padding(20.dp)
             ){
-                StyledText("PERFIL", color = Color.White, fontSize = 25.sp, fontWeight = FontWeight.Bold)
+                StyledText("PERFIL", color = White, fontSize = 25.sp, fontWeight = FontWeight.Bold)
             }
         }
     ){innerpadding ->
@@ -77,23 +77,23 @@ fun ProfileScreen(){
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
             .fillMaxSize()
-            .background(Black)
+            .background(MaterialTheme.colorScheme.primary)
             .padding(innerpadding)) {
 
             Spacer(Modifier.size(65.dp))
 
-            Icon(Icons.Outlined.AccountCircle, contentDescription = null, Modifier.size(65.dp))
+            Icon(Icons.Outlined.AccountCircle, contentDescription = null, Modifier.size(65.dp), tint = MaterialTheme.colorScheme.surface)
 
             Spacer(Modifier.size(65.dp))
 
-            StyledText("Olá, ${userName.title()}", color = Color.White, fontSize = 30.sp)
+            StyledText("Olá, ${userName.title()}", color = MaterialTheme.colorScheme.surface, fontSize = 30.sp)
 
             Spacer(Modifier.size(65.dp))
 
             StyledTextField(
                 value = newName,
                 onValueChange = {newName = it},
-                label = { StyledText("Editar Nome", color = White) }
+                label = { StyledText("Editar Nome", color = MaterialTheme.colorScheme.surface) }
             )
 
             Spacer(Modifier.size(20.dp))
@@ -108,7 +108,7 @@ fun ProfileScreen(){
 
             if(isClicked){
                 EditName(newName)
-                userName = newName
+                name = newName
             }
 
         }

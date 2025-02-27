@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import mayckgomes.com.projectgym.ui.theme.Black
 import mayckgomes.com.projectgym.ui.theme.Gray
 import mayckgomes.com.projectgym.ui.theme.White
 import mayckgomes.com.projectgym.ui.theme.Yellow

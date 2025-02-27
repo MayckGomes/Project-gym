@@ -1,21 +1,8 @@
 package mayckgomes.com.projectgym.funcs
 
 import android.content.Context
-import android.content.SharedPreferences
-import android.util.Log
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.util.fastForEach
 import androidx.room.Room
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
-import mayckgomes.com.projectgym.DataTypes.Exercicio
 import mayckgomes.com.projectgym.database.exercices.Exercicies
 import mayckgomes.com.projectgym.database.exercices.exercicesDatabase
 import mayckgomes.com.projectgym.database.exercices.exerciciesDAO
@@ -53,17 +40,11 @@ object DatabasesFuncs {
         return exercicesActions
     }
 
-    suspend fun GetTreinos(context: Context): Flow<List<Training>> {
+    fun GetTreinos(context: Context): Flow<List<Training>> {
 
         val db = GetTreinosDB(context)
 
         return db.getAll()
-    }
-
-    suspend fun GetTreinosList(context: Context): List<Training> {
-        val db = GetTreinosDB(context)
-
-        return db.getAllList()
     }
 
 
@@ -71,7 +52,7 @@ object DatabasesFuncs {
 
         val db = GetTreinosDB(context)
 
-        var training = db.getTrainingById(idTreino)
+        val training = db.getTrainingById(idTreino)
 
         return training
     }
@@ -108,15 +89,6 @@ object DatabasesFuncs {
         val db = GetTreinosDB(context)
 
         db.updateTraining(Training(id,nome))
-
-    }
-
-
-    suspend fun EditExercicios(context: Context, exercicies: Exercicies){
-
-        val db = GetExerciciosDB(context)
-
-        db.UpdateExercice(exercicies)
 
     }
 

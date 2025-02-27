@@ -27,6 +27,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,6 +46,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.text.isDigitsOnly
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
@@ -57,9 +59,7 @@ import mayckgomes.com.projectgym.funcs.DatabasesFuncs.DeleteTreinos
 import mayckgomes.com.projectgym.funcs.DatabasesFuncs.EditTreinos
 import mayckgomes.com.projectgym.funcs.DatabasesFuncs.GetListExercicies
 import mayckgomes.com.projectgym.funcs.DatabasesFuncs.GetTreinoById
-import mayckgomes.com.projectgym.funcs.DatabasesFuncs.GetTreinosList
 import mayckgomes.com.projectgym.funcs.MakeMessage
-import mayckgomes.com.projectgym.funcs.System.TrainingList
 import mayckgomes.com.projectgym.funcs.title
 import mayckgomes.com.projectgym.ui.Components.StyledAlertDialog
 import mayckgomes.com.projectgym.ui.Components.StyledText
@@ -140,11 +140,7 @@ fun EditingScreen(navController: NavController, id:String) {
 
             val treino = GetTreinoById(context, idTreino.toInt())
 
-            if (treino != null){
-
-                nomeTreino = treino.name
-
-            }
+            nomeTreino = treino.name
 
             titulo = "Editando: $nomeTreino"
 
@@ -184,7 +180,7 @@ fun EditingScreen(navController: NavController, id:String) {
                 ) {
 
                     IconButton(onClick = { backAlert = true }) {
-                        Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = null)
+                        Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = null, tint = MaterialTheme.colorScheme.surface)
                     }
 
                     StyledText(
@@ -285,7 +281,7 @@ fun EditingScreen(navController: NavController, id:String) {
                 .verticalScroll(rememberScrollState())
         ) {
 
-            StyledText("Treino", fontSize = 25.sp, fontWeight = FontWeight.Bold)
+            StyledText("Treino", fontSize = 25.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.surface)
 
             Spacer(Modifier.size(10.dp))
 
@@ -297,7 +293,7 @@ fun EditingScreen(navController: NavController, id:String) {
 
             Spacer(Modifier.size(15.dp))
 
-            StyledText("Exercicios", fontWeight = FontWeight.Bold, fontSize = 25.sp)
+            StyledText("Exercicios", fontWeight = FontWeight.Bold, fontSize = 25.sp, color = MaterialTheme.colorScheme.surface)
 
             Spacer(Modifier.size(10.dp))
 
@@ -377,43 +373,59 @@ fun EditingScreen(navController: NavController, id:String) {
                             if (minutos == "") {minutos = "0"}
                             if (segundos == ""){segundos = "0"}
 
-                            scope.launch{
+                            if (minutos.isDigitsOnly() && segundos.isDigitsOnly()){
 
-                                AddExercicies(context, Exercicies(
-                                    idTraining = idTreino.toInt(),
-                                    name = nomeExercicio.title(),
-                                    series = (minutos.toInt()*60)+segundos.toInt(),
-                                    repeticoes = -1)
-                                )
+                                scope.launch{
 
-                                listaExercicios = GetListExercicies(context, idTreino.toInt())
+                                    AddExercicies(context, Exercicies(
+                                        idTraining = idTreino.toInt(),
+                                        name = nomeExercicio.title(),
+                                        series = (minutos.toInt()*60)+segundos.toInt(),
+                                        repeticoes = -1)
+                                    )
 
-                                nomeExercicio = ""
+                                    listaExercicios = GetListExercicies(context, idTreino.toInt())
+
+                                    nomeExercicio = ""
 
 
-                                minutos = ""
-                                segundos = ""
+                                    minutos = ""
+                                    segundos = ""
+
+                                }
+
+                            } else {
+
+                                MakeMessage(context,"Apenas aceitos números")
 
                             }
                         }
 
                         !isTimer && nomeExercicio.isNotEmpty() -> {
 
-                            scope.launch {
+                            if (series.isDigitsOnly() && repeticoes.isDigitsOnly()){
 
-                                AddExercicies(context,Exercicies(
-                                    idTraining = idTreino.toInt(),
-                                    name = nomeExercicio.title(),
-                                    series = if (series == "") 0 else series.toInt(),
-                                    repeticoes = if (repeticoes == "") 0 else repeticoes.toInt()
-                                ))
+                                scope.launch {
 
-                                listaExercicios = GetListExercicies(context, idTreino.toInt())
+                                    AddExercicies(context,Exercicies(
+                                        idTraining = idTreino.toInt(),
+                                        name = nomeExercicio.title(),
+                                        series = if (series == "") 0 else series.toInt(),
+                                        repeticoes = if (repeticoes == "") 0 else repeticoes.toInt()
+                                    ))
 
-                                nomeExercicio = ""
+                                    listaExercicios = GetListExercicies(context, idTreino.toInt())
 
-                                series = ""
-                                repeticoes = ""
+                                    nomeExercicio = ""
+
+                                    series = ""
+                                    repeticoes = ""
+
+                                }
+
+                            } else {
+
+                                MakeMessage(context,"Apenas aceitos números")
 
                             }
                         }

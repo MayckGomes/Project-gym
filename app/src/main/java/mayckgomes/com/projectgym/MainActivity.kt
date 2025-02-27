@@ -7,10 +7,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -21,7 +17,7 @@ import mayckgomes.com.projectgym.Screens.Editing.EditingScreen
 import mayckgomes.com.projectgym.Screens.Home.Menu
 import mayckgomes.com.projectgym.Screens.Training.FinalTrainingScreen
 import mayckgomes.com.projectgym.Screens.Training.TrainingScreen
-import mayckgomes.com.projectgym.funcs.System.loadData
+import mayckgomes.com.projectgym.funcs.System.LoadData
 import mayckgomes.com.projectgym.ui.theme.ProjectGymTheme
 
 class MainActivity : ComponentActivity() {
@@ -31,7 +27,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             ProjectGymTheme {
 
-                loadData(LocalContext.current)
+                LoadData(LocalContext.current)
 
                 Navegacao()
 

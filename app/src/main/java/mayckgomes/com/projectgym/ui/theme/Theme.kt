@@ -14,14 +14,16 @@ private val DarkColorScheme = darkColorScheme(
     primary = Black,
     secondary = DarkGray,
     tertiary = Gray ,
-    surface = Yellow
+    surface = White,
+    background = Black
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = White,
     secondary = LightGray,
     tertiary = Gray,
-    surface = Yellow
+    surface = Black,
+    background = White
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -38,7 +40,7 @@ private val LightColorScheme = lightColorScheme(
 fun ProjectGymTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

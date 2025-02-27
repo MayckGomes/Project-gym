@@ -20,9 +20,9 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,6 +53,7 @@ import mayckgomes.com.projectgym.ui.Components.StyledText
 import mayckgomes.com.projectgym.ui.theme.Black
 import mayckgomes.com.projectgym.ui.theme.DarkGray
 import mayckgomes.com.projectgym.ui.theme.Gray
+import mayckgomes.com.projectgym.ui.theme.White
 import mayckgomes.com.projectgym.ui.theme.Yellow
 import java.time.LocalDate
 
@@ -80,7 +81,7 @@ fun TrainingNamesScreen(navController: NavController, lista: MutableStateFlow<Li
                    .background(color = DarkGray)
                    .padding(20.dp)
            ){
-               StyledText("TREINOS", color = Color.White, fontSize = 25.sp, fontWeight = FontWeight.Bold)
+               StyledText("TREINOS", color = White, fontSize = 25.sp, fontWeight = FontWeight.Bold)
            }
        },
        floatingActionButton = {
@@ -99,7 +100,7 @@ fun TrainingNamesScreen(navController: NavController, lista: MutableStateFlow<Li
            LazyColumn(
                modifier = Modifier
                    .fillMaxSize()
-                   .background(color = Black)
+                   .background(color = MaterialTheme.colorScheme.primary)
                    .padding(innerpadding)
                    .padding(10.dp)
            ) {
@@ -111,13 +112,13 @@ fun TrainingNamesScreen(navController: NavController, lista: MutableStateFlow<Li
                        modifier = Modifier
                            .fillMaxWidth(1f)
                            .clip(RoundedCornerShape(12.dp))
-                           .background(DarkGray)
+                           .background(MaterialTheme.colorScheme.secondary)
                            .padding(10.dp)
                    ) {
 
                        Spacer(Modifier.size(1.dp))
 
-                       StyledText( treino.name.title() , color = Color.White, fontSize = 25.sp)
+                       StyledText( treino.name.title() , color = MaterialTheme.colorScheme.surface, fontSize = 25.sp)
 
                        Column(
                            horizontalAlignment = Alignment.CenterHorizontally,
@@ -133,13 +134,13 @@ fun TrainingNamesScreen(navController: NavController, lista: MutableStateFlow<Li
                                onClick = {
                                    scope.launch {
 
-                                       val lista = GetListExercicies(context, treino.id)
+                                       val verifyList = GetListExercicies(context, treino.id)
 
                                        if (treino.name == "criando"){
 
                                            MakeMessage(context,"Termine de criar o treino para começar a treinar")
 
-                                       } else if (lista.isEmpty()){
+                                       } else if (verifyList.isEmpty()){
 
                                            MakeMessage(context, "Não Há Exercicios nesse treino")
 
@@ -154,7 +155,7 @@ fun TrainingNamesScreen(navController: NavController, lista: MutableStateFlow<Li
                                    }
                                }
                            ) {
-                               StyledText("Comecar", fontSize = 15.sp)
+                               StyledText("Comecar", fontSize = 15.sp, color = Black, fontWeight = FontWeight.Bold)
                            }
 
                            Button(
@@ -165,7 +166,7 @@ fun TrainingNamesScreen(navController: NavController, lista: MutableStateFlow<Li
                                    contentColor = Color.Black
                                ),
                                onClick = {navController.navigate(EditOrAddTreino(treino.id.toString()))}) {
-                               StyledText("Editar", fontSize = 15.sp)
+                               StyledText("Editar", fontSize = 15.sp, color = Black, fontWeight = FontWeight.Bold)
                            }
 
                        }

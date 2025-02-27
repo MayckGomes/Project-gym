@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
@@ -12,6 +14,7 @@ import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -19,6 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -26,10 +30,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import kotlinx.coroutines.launch
 import mayckgomes.com.projectgym.DataTypes.NavBarItem
 import mayckgomes.com.projectgym.funcs.System
 import mayckgomes.com.projectgym.funcs.System.TrainingList
-import mayckgomes.com.projectgym.funcs.Tela
 import mayckgomes.com.projectgym.ui.Components.StyledText
 import mayckgomes.com.projectgym.ui.theme.Black
 import mayckgomes.com.projectgym.ui.theme.Gray
@@ -39,9 +43,9 @@ import mayckgomes.com.projectgym.ui.theme.Yellow
 @Composable
 fun Menu(navController: NavController){
 
-    var telaName by rememberSaveable {
-        mutableStateOf("Home")
-    }
+    val scope = rememberCoroutineScope()
+
+    val pagerState = rememberPagerState(pageCount = { 3 })
 
     val navItems = listOf(
         NavBarItem(
@@ -75,21 +79,31 @@ fun Menu(navController: NavController){
                 containerColor = Black,
 
             ) {
-                navItems.forEach{ navBarItem ->
+                navItems.forEachIndexed{ index,navBarItem ->
                     NavigationBarItem(
-                        selected = if (itemSelected == navBarItem.title){true}else{false},
+                        selected = if (pagerState.currentPage == index){true}else{false},
                         onClick = {
+
                             itemSelected=navBarItem.title
-                            telaName = navBarItem.screen
+
+                            scope.launch {
+
+                                pagerState.scrollToPage(index)
+
+                            }
                                   },
                         icon = {
-                            if(itemSelected == navBarItem.title){
+                            if(pagerState.currentPage == index){
+
                                 Icon(navBarItem.iconSelected, contentDescription = null, tint = Yellow)
-                            }else{
-                            Icon(navBarItem.iconUnselected, contentDescription = null, tint = Yellow)
+
+                            } else {
+
+                                Icon(navBarItem.iconUnselected, contentDescription = null, tint = Yellow)
+
                             }},
                         label = {
-                            if(itemSelected == navBarItem.title){
+                            if(pagerState.currentPage == index){
                                 StyledText(navBarItem.title,
                                     color = Yellow,
                                     fontWeight = FontWeight.Bold,
@@ -117,10 +131,20 @@ fun Menu(navController: NavController){
                 .background(color = Gray)
         ) {
 
+            System.LoadData(LocalContext.current)
 
-            System.loadData(LocalContext.current)
+            HorizontalPager(
+                state = pagerState,
+                modifier = Modifier.fillMaxSize(1f)
+            ) {page ->
 
-            Tela(telaName, navController = navController, TrainingList)
+                when(page){
+                    0 -> HomeScreen()
+                    1 -> TrainingNamesScreen(navController, TrainingList)
+                    2 -> ProfileScreen()
+                }
+
+            }
         }
     }
 
