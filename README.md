@@ -2,6 +2,10 @@
 
 esse foi um projeto realizado para aprendizado de novas ferramentas do desenvolvimento android.
 
+## Funcionalidades :
+
+Com esse app, Você pode organizar sua rotina de treino, com interfaces intuitivas e fáceis de entender.
+
 ## Elementos usados:
 
 - button
