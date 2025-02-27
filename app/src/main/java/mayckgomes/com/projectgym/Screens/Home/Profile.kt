@@ -53,7 +53,7 @@ fun ProfileScreen(){
         mutableStateOf(false)
     }
 
-    val userName by rememberSaveable {
+    var userName by rememberSaveable {
         mutableStateOf(name)
     }
 
@@ -107,8 +107,12 @@ fun ProfileScreen(){
             }
 
             if(isClicked){
+                isClicked = false
+
                 EditName(newName)
-                name = newName
+                userName = newName
+
+                newName = ""
             }
 
         }

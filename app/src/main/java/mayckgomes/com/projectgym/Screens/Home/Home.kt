@@ -35,7 +35,6 @@ import mayckgomes.com.projectgym.funcs.System.name
 import mayckgomes.com.projectgym.funcs.title
 import mayckgomes.com.projectgym.ui.Components.StyledNameDialog
 import mayckgomes.com.projectgym.ui.Components.StyledText
-import mayckgomes.com.projectgym.ui.theme.Black
 import mayckgomes.com.projectgym.ui.theme.DarkGray
 import mayckgomes.com.projectgym.ui.theme.Gray
 import mayckgomes.com.projectgym.ui.theme.White

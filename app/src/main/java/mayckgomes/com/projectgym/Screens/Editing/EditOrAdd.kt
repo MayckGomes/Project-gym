@@ -220,7 +220,7 @@ fun EditingScreen(navController: NavController, id:String) {
                    }
                ) {
 
-                   StyledText("Criar Treino")
+                   StyledText("Criar Treino", color = Black)
 
                }
 
@@ -239,7 +239,7 @@ fun EditingScreen(navController: NavController, id:String) {
                        colors = ButtonDefaults.buttonColors(containerColor = Color.Red,
                            contentColor = Black)) {
 
-                       Text("Excluir")
+                       Text("Excluir", color = Black)
 
                    }
 
@@ -260,7 +260,7 @@ fun EditingScreen(navController: NavController, id:String) {
                        colors = ButtonDefaults.buttonColors(containerColor = Yellow,
                            contentColor = Black)) {
 
-                       Text("Editar")
+                       Text("Editar", color = Black)
 
                    }
 
@@ -435,7 +435,7 @@ fun EditingScreen(navController: NavController, id:String) {
                     }
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = Yellow, contentColor = Black)) {
-                StyledText("Adicionar Exercicio", fontWeight = FontWeight.Bold)
+                StyledText("Adicionar Exercicio", fontWeight = FontWeight.Bold, color = Black)
             }
 
             Spacer(Modifier.size(10.dp))

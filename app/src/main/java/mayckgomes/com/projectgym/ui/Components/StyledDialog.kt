@@ -92,7 +92,7 @@ fun StyledNameDialog(
 
                 ) {
 
-                    StyledText("Começar", fontWeight = FontWeight.Bold)
+                    StyledText("Começar", fontWeight = FontWeight.Bold, color = Black)
 
                 }
 

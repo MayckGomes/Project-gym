@@ -159,7 +159,11 @@ fun TrainingScreen(navController: NavController,idTraining:Int){
                             .padding(0.dp, 0.dp, 0.dp, 40.dp)
                     ) {
 
-                        TextButton(onClick = {}) {
+                        TextButton(onClick = {
+
+                            isClicked = true
+
+                        }) {
                             StyledText("Cancelar", color = Color.Red, fontWeight = FontWeight.Bold)
                         }
 
