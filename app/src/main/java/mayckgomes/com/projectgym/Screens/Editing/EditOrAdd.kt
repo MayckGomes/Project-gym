@@ -140,7 +140,11 @@ fun EditingScreen(navController: NavController, id:String) {
 
             val treino = GetTreinoById(context, idTreino.toInt())
 
-            nomeTreino = treino.name
+            if (treino != null){
+
+                nomeTreino = treino.name
+
+            }
 
             titulo = "Editando: $nomeTreino"
 
