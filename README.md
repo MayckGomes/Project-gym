@@ -14,6 +14,7 @@ Com esse app, Você pode organizar sua rotina de treino, com interfaces intuitiv
 - navBar
 - lazyColumn
 - roomDB
+- coroutines
 - checkbox
 
 ## UI
