@@ -16,6 +16,8 @@ Com esse app, Você pode organizar sua rotina de treino, com interfaces intuitiv
 - roomDB
 - coroutines
 - checkbox
+- alert dialog
+- dialog
 
 ## UI
 
